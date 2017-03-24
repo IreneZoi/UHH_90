@@ -859,7 +859,11 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         doGenTopJets = cms.bool(not useData),
         gentopjet_sources = cms.VInputTag(cms.InputTag("ak8GenJetsSoftDrop")),
 <<<<<<< HEAD
+<<<<<<< HEAD
 #        gentopjet_sources = cms.VInputTag(cms.InputTag("ak8GenJets"),cms.InputTag("ak8GenJetsSoftDrop")), #this can be used to save N-subjettiness for ungroomed GenJets
+=======
+        #gentopjet_sources = cms.VInputTag(cms.InputTag("ak8GenJets"),cms.InputTag("ak8GenJetsSoftDrop")), #this can be used to save N-subjettiness for ungroomed GenJets
+>>>>>>> e081421... add genjet njettiness and pf energy fractions for genjets
 =======
         #gentopjet_sources = cms.VInputTag(cms.InputTag("ak8GenJets"),cms.InputTag("ak8GenJetsSoftDrop")), #this can be used to save N-subjettiness for ungroomed GenJets
 >>>>>>> e081421... add genjet njettiness and pf energy fractions for genjets
@@ -869,9 +873,15 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         gentopjet_tau2 = cms.VInputTag(),
         gentopjet_tau3 = cms.VInputTag(),
 <<<<<<< HEAD
+<<<<<<< HEAD
 #        gentopjet_tau1 = cms.VInputTag(cms.InputTag("NjettinessAk8Gen","tau1"),cms.InputTag("NjettinessAk8SoftDropGen","tau1")), #this can be used to save N-subjettiness for GenJets
 #        gentopjet_tau2 = cms.VInputTag(cms.InputTag("NjettinessAk8Gen","tau2"),cms.InputTag("NjettinessAk8SoftDropGen","tau2")), #this can be used to save N-subjettiness for GenJets
 #        gentopjet_tau3 = cms.VInputTag(cms.InputTag("NjettinessAk8Gen","tau3"),cms.InputTag("NjettinessAk8SoftDropGen","tau3")), #this can be used to save N-subjettiness for GenJets
+=======
+        #gentopjet_tau1 = cms.VInputTag(cms.InputTag("NjettinessAk8Gen","tau1"),cms.InputTag("NjettinessAk8SoftDropGen","tau1")), #this can be used to save N-subjettiness for GenJets
+        #gentopjet_tau2 = cms.VInputTag(cms.InputTag("NjettinessAk8Gen","tau2"),cms.InputTag("NjettinessAk8SoftDropGen","tau2")), #this can be used to save N-subjettiness for GenJets
+        #gentopjet_tau3 = cms.VInputTag(cms.InputTag("NjettinessAk8Gen","tau3"),cms.InputTag("NjettinessAk8SoftDropGen","tau3")), #this can be used to save N-subjettiness for GenJets
+>>>>>>> e081421... add genjet njettiness and pf energy fractions for genjets
 =======
         #gentopjet_tau1 = cms.VInputTag(cms.InputTag("NjettinessAk8Gen","tau1"),cms.InputTag("NjettinessAk8SoftDropGen","tau1")), #this can be used to save N-subjettiness for GenJets
         #gentopjet_tau2 = cms.VInputTag(cms.InputTag("NjettinessAk8Gen","tau2"),cms.InputTag("NjettinessAk8SoftDropGen","tau2")), #this can be used to save N-subjettiness for GenJets
