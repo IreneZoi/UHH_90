@@ -30,7 +30,8 @@ void convertPackedCandToPFCand::produce(edm::Event& iEvent,const edm::EventSetup
   edm::Handle< pat::PackedCandidateCollection > packedCands_;
   iEvent.getByToken(src_, packedCands_);
 
-  std::auto_ptr< reco::PFCandidateCollection > recoPFCands(new reco::PFCandidateCollection());
+  //  std::auto_ptr< reco::PFCandidateCollection > recoPFCands(new reco::PFCandidateCollection());
+  std::unique_ptr< reco::PFCandidateCollection > recoPFCands(new reco::PFCandidateCollection());                                                                                                           
 
   reco::PFCandidate dummy;
   for(int iCand=0; iCand<int(packedCands_->size()); ++iCand){
@@ -39,7 +40,8 @@ void convertPackedCandToPFCand::produce(edm::Event& iEvent,const edm::EventSetup
     recoPFCands->push_back(intPFCand);
   }
 
-  iEvent.put(recoPFCands);
+  //iEvent.put(recoPFCands);
+  iEvent.put(std::unique_ptr< reco::PFCandidateCollection >(new reco::PFCandidateCollection(*recoPFCands)));
 
   return;
 }

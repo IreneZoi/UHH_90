@@ -2,8 +2,8 @@ import FWCore.ParameterSet.Config as cms
 
 #isDebug = True
 isDebug = False
-#useData = False
-useData = True
+useData = False
+#useData = True
 if useData:
     met_sources_GL =  cms.vstring("slimmedMETs","slimmedMETsPuppi","slMETsCHS","slimmedMETsMuEGClean","slimmedMETsEGClean","slimmedMETsUncorrected")
 else:
@@ -38,8 +38,10 @@ process = cms.Process("USER")
 process.load("FWCore.MessageService.MessageLogger_cfi")
 process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(1000)
 #process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(1)
-process.options = cms.untracked.PSet( wantSummary = cms.untracked.bool(False) , allowUnscheduled = cms.untracked.bool(True) )
-#process.options = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) , allowUnscheduled = cms.untracked.bool(True) )
+#irene:
+#process.options = cms.untracked.PSet( wantSummary = cms.untracked.bool(False) , allowUnscheduled = cms.untracked.bool(True), SkipEvent = cms.untracked.vstring('ProductNotFound') )
+#before it was process.options = cms.untracked.PSet( wantSummary = cms.untracked.bool(False) , allowUnscheduled = cms.untracked.bool(True)
+process.options = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) , allowUnscheduled = cms.untracked.bool(True) )
 
 # DEBUG ----------------
 if isDebug:
@@ -57,7 +59,17 @@ if isDebug:
 
 process.source = cms.Source("PoolSource",
   fileNames  = cms.untracked.vstring([
-            '/store/data/Run2016B/SingleElectron/MINIAOD/03Feb2017_ver2-v2/110000/028CD245-EFEA-E611-8A2B-90B11C2801E1.root'
+
+           #'/store/mc/RunIISpring16MiniAODv2/TT_TuneCUETP8M1_13TeV-powheg-pythia8/MINIAODSIM/PUSpring16RAWAODSIM_reHLT_80X_mcRun2_asymptotic_v14_ext3-v1/00000/0064B539-803A-E611-BDEA-002590D0B060.root' #MC test file
+#           '/store/mc/RunIISpring16MiniAODv2/TT_TuneCUETP8M1_13TeV-powheg-pythia8/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext3-v2/70000/00287FF4-0E40-E611-8D06-00266CFE78EC.root'
+#           '/store/mc/RunIISummer16MiniAODv2/QCD_Pt_15to6500_FwdEnriched_TuneCUETP8M1_13TeV_pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/70000/26DF5A94-14BE-E611-99FC-0CC47A78A3EE.root'
+#irene            'store/mc/RunIISummer16MiniAODv2/BulkGravToWWToWlepWhad_narrow_M-2000_13TeV-madgraph/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/80000/F6EF3B47-1AB7-E611-994D-0025904C7A54.root'
+# irene, no upgrade, with pileup 
+'file:/nfs/dust/cms/user/zoiirene/UpgradeStudiesGtoWW/Phase1/step3_inMINIAODSIM.root'
+#'file:/nfs/dust/cms/user/zoiirene/UpgradeStudiesGtoWW/Phase1/step3_inMINIAODSIM.root'
+           # '/store/mc/RunIISummer16MiniAODv2/ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1/50000/3495D426-73C1-E611-B11B-0CC47A4D764A.root'
+           #'/store/data/Run2016B/JetHT/MINIAOD/PromptReco-v2/000/273/503/00000/069FE912-3E1F-E611-8EE4-02163E011DF3.root'
+           #'/store/data/Run2016B/SingleMuon/MINIAOD/PromptReco-v2/000/273/150/00000/34A57FB8-D819-E611-B0A4-02163E0144EE.root'
   ]),
   skipEvents = cms.untracked.uint32(0)
 )
@@ -89,7 +101,7 @@ process.out = cms.OutputModule("PoolOutputModule",
                                fileName = cms.untracked.string('miniaod.root'),
                                outputCommands = MINIAODSIMEventContent.outputCommands )
 
-process.out.outputCommands.extend([
+process.out.outputCommands.extend([ 
     'keep *_patJetsAk8CHS*_*_*',
     'keep *_patJetsAk8Puppi*_*_*',
     'keep *_patJetsCa15CHS*_*_*',
@@ -489,6 +501,8 @@ process.NjettinessAk8SoftDropPuppi = process.NjettinessAk8SoftDropCHS.clone(src 
 #process.NjettinessCa8Puppi = Njettiness.clone(src = cms.InputTag("patJetsCa8PuppiJets"), cone = cms.double(0.8))
 process.NjettinessCa15Puppi = Njettiness.clone(src = cms.InputTag("ca15PuppiJets"), cone = cms.double(1.5),R0 = cms.double(1.5))
 process.NjettinessAk8Puppi = Njettiness.clone(src = cms.InputTag("ak8PuppiJetsFat"), cone = cms.double(0.8))
+process.NjettinessAk8Gen = Njettiness.clone(src = cms.InputTag("ak8GenJets"), cone = cms.double(0.8))
+process.NjettinessAk8SoftDropGen = Njettiness.clone(src = cms.InputTag("ak8GenJetsSoftDrop"), cone = cms.double(0.8))
 """
 process.QJetsCa8CHS = QJetsAdder.clone(src = cms.InputTag("patJetsCa8CHSJets"), jetRad = cms.double(0.8))
 process.QJetsCa15CHS = QJetsAdder.clone(src = cms.InputTag("patJetsCa15CHSJets"), jetRad = cms.double(1.5))
@@ -675,13 +689,13 @@ process.slimmedElectronsUSER = cms.EDProducer('PATElectronUserData',
 
 ### additional MET filters not given in MiniAOD
 
-process.load('RecoMET.METFilters.BadPFMuonFilter_cfi')
-process.BadPFMuonFilter.muons = cms.InputTag("slimmedMuons")
-process.BadPFMuonFilter.PFCandidates = cms.InputTag("packedPFCandidates")
+#process.load('RecoMET.METFilters.BadPFMuonFilter_cfi')
+#process.BadPFMuonFilter.muons = cms.InputTag("slimmedMuons")
+#process.BadPFMuonFilter.PFCandidates = cms.InputTag("packedPFCandidates")
 
-process.load('RecoMET.METFilters.BadChargedCandidateFilter_cfi')
-process.BadChargedCandidateFilter.muons = cms.InputTag("slimmedMuons")
-process.BadChargedCandidateFilter.PFCandidates = cms.InputTag("packedPFCandidates")
+#process.load('RecoMET.METFilters.BadChargedCandidateFilter_cfi')
+#process.BadChargedCandidateFilter.muons = cms.InputTag("slimmedMuons")
+#process.BadChargedCandidateFilter.PFCandidates = cms.InputTag("packedPFCandidates")
 
 
 ### NtupleWriter
@@ -837,9 +851,17 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         genjet_etamax = cms.double(5.0),
                             
         doGenTopJets = cms.bool(not useData),
-        gentopjet_sources = cms.vstring("ak8GenJetsSoftDrop"),
+#        gentopjet_sources = cms.VInputTag(cms.InputTag("ak8GenJetsSoftDrop")),
+#        gentopjet_sources = cms.VInputTag(cms.InputTag("ak8GenJets"),cms.InputTag("ak8GenJetsSoftDrop")), #this can be used to save N-subjettiness for ungroomed GenJets
+        gentopjet_sources = cms.vstring("ak8GenJets","ak8GenJetsSoftDrop"), #irene 
         gentopjet_ptmin = cms.double(150.0), 
         gentopjet_etamax = cms.double(5.0),
+#        gentopjet_tau1 = cms.VInputTag(),
+#        gentopjet_tau2 = cms.VInputTag(),
+#       gentopjet_tau3 = cms.VInputTag(),
+        gentopjet_tau1 = cms.VInputTag(cms.InputTag("NjettinessAk8Gen","tau1"),cms.InputTag("NjettinessAk8SoftDropGen","tau1")), #this can be used to save N-subjettiness for GenJets
+        gentopjet_tau2 = cms.VInputTag(cms.InputTag("NjettinessAk8Gen","tau2"),cms.InputTag("NjettinessAk8SoftDropGen","tau2")), #this can be used to save N-subjettiness for GenJets
+        gentopjet_tau3 = cms.VInputTag(cms.InputTag("NjettinessAk8Gen","tau3"),cms.InputTag("NjettinessAk8SoftDropGen","tau3")), #this can be used to save N-subjettiness for GenJets
         
         doGenJetsWithParts = cms.bool(False),
         doAllPFParticles = cms.bool(False),
@@ -868,8 +890,8 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
 
 
 process.p = cms.Path(
-    process.BadPFMuonFilter *
-    process.BadChargedCandidateFilter *
+    #process.BadPFMuonFilter *
+    #process.BadChargedCandidateFilter *
     process.MyNtuple)
 
 open('pydump.py','w').write(process.dumpPython())

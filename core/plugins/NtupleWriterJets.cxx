@@ -10,7 +10,7 @@
 #include "RecoBTau/JetTagComputer/interface/JetTagComputer.h"
 #include "RecoBTau/JetTagComputer/interface/JetTagComputerRecord.h"
 #include "FWCore/Framework/interface/ESHandle.h"
-#include "DataFormats/JetReco/interface/HTTTopJetTagInfo.h"
+//#include "DataFormats/JetReco/interface/HTTTopJetTagInfo.h"
 #include "RecoBTag/SecondaryVertex/interface/CandidateBoostedDoubleSecondaryVertexComputer.h"
 #include "TrackingTools/Records/interface/TransientTrackRecord.h"
 #include "RecoBTau/JetTagComputer/interface/JetTagComputerRecord.h"
@@ -320,8 +320,8 @@ NtupleWriterTopJets::NtupleWriterTopJets(Config & cfg, bool set_jets_member): pt
     subjet_src = cfg.subjet_src;
     higgs_src= cfg.higgs_src;
 
-    src_hepTopTagCHS_token = cfg.cc.consumes<edm::View<reco::HTTTopJetTagInfo> >(edm::InputTag("hepTopTagCHS"));
-    src_hepTopTagPuppi_token = cfg.cc.consumes<edm::View<reco::HTTTopJetTagInfo> >(edm::InputTag("hepTopTagPuppi"));
+    //src_hepTopTagCHS_token = cfg.cc.consumes<edm::View<reco::HTTTopJetTagInfo> >(edm::InputTag("hepTopTagCHS"));
+    //src_hepTopTagPuppi_token = cfg.cc.consumes<edm::View<reco::HTTTopJetTagInfo> >(edm::InputTag("hepTopTagPuppi"));
 
     pruned_src = cfg.pruned_src;
     if(pruned_src.find("Mass")==string::npos){
@@ -420,10 +420,10 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
       }
     }
     vector<TopJet> topjets;
-    edm::Handle<edm::View<reco::HTTTopJetTagInfo>> top_jet_infos;
-    if (topjet_collection.find("CHS")!=string::npos) event.getByToken(src_hepTopTagCHS_token, top_jet_infos);
-    if (topjet_collection.find("Puppi")!=string::npos) event.getByToken(src_hepTopTagPuppi_token, top_jet_infos); // Make sure both collections have the same size
-    if (topjet_collection.find("Hep")!=string::npos) assert(pat_topjets.size()==top_jet_infos->size());
+    // edm::Handle<edm::View<reco::HTTTopJetTagInfo>> top_jet_infos;
+    // if (topjet_collection.find("CHS")!=string::npos) event.getByToken(src_hepTopTagCHS_token, top_jet_infos);
+    // if (topjet_collection.find("Puppi")!=string::npos) event.getByToken(src_hepTopTagPuppi_token, top_jet_infos); // Make sure both collections have the same size
+    // if (topjet_collection.find("Hep")!=string::npos) assert(pat_topjets.size()==top_jet_infos->size());
 
     /*--- lepton keys ---*/
     std::vector<long int> lepton_keys;
@@ -573,16 +573,16 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
             }
           }
         }
-        if (topjet_collection.find("Hep")!=string::npos)
-           {
-              const reco::HTTTopJetTagInfo& jet_info = top_jet_infos->at(i);
-              topjet.set_tag(TopJet::tagname2tag("fRec"), jet_info.properties().fRec);
-              topjet.set_tag(TopJet::tagname2tag("Ropt"), jet_info.properties().Ropt);
-              topjet.set_tag(TopJet::tagname2tag("massRatioPassed"), jet_info.properties().massRatioPassed);
-              topjet.set_tag(TopJet::tagname2tag("mass"),pat_topjet.mass());
-              topjet.set_tag(TopJet::tagname2tag("RoptCalc"), jet_info.properties().RoptCalc);
-              topjet.set_tag(TopJet::tagname2tag("ptForRoptCalc"), jet_info.properties().ptForRoptCalc);
-           }
+        // if (topjet_collection.find("Hep")!=string::npos)
+        //    {
+        //       const reco::HTTTopJetTagInfo& jet_info = top_jet_infos->at(i);
+        //       topjet.set_tag(TopJet::tagname2tag("fRec"), jet_info.properties().fRec);
+        //       topjet.set_tag(TopJet::tagname2tag("Ropt"), jet_info.properties().Ropt);
+        //       topjet.set_tag(TopJet::tagname2tag("massRatioPassed"), jet_info.properties().massRatioPassed);
+        //       topjet.set_tag(TopJet::tagname2tag("mass"),pat_topjet.mass());
+        //       topjet.set_tag(TopJet::tagname2tag("RoptCalc"), jet_info.properties().RoptCalc);
+        //       topjet.set_tag(TopJet::tagname2tag("ptForRoptCalc"), jet_info.properties().ptForRoptCalc);
+        //    }
 
         /*--- Njettiness ------*/
         if(njettiness_src.empty()){
