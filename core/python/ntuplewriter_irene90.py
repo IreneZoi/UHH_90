@@ -3,7 +3,7 @@ import FWCore.ParameterSet.Config as cms
 process = cms.Process("USER")
 
 process.source = cms.Source("PoolSource",
-    fileNames = cms.untracked.vstring('file:/nfs/dust/cms/user/zoiirene/UpgradeStudiesGtoWW/Phase1/EXO-RunIISummer16MiniAODv2-01758_Phase1.root'),
+    fileNames = cms.untracked.vstring('file:/nfs/dust/cms/user/zoiirene/UpgradeStudiesGtoWW/Phase1/EXO-RunIISummer16MiniAODv2-01758_Phase1_90.root'),
     skipEvents = cms.untracked.uint32(0)
 )
 process.HFRecalParameterBlock = cms.PSet(
@@ -332,6 +332,7 @@ process.mvaEleID_Spring16_HZZ_V1_producer_config = cms.PSet(
 )
 
 process.options = cms.untracked.PSet(
+    SkipEvent = cms.untracked.vstring('ProductNotFound'),
     allowUnscheduled = cms.untracked.bool(True),
     wantSummary = cms.untracked.bool(False)
 )
@@ -3988,6 +3989,38 @@ process.patJetCorrFactorsCa15PuppiJetsSoftDropSubjets = cms.EDProducer("JetCorrF
 )
 
 
+process.patJetCorrFactorsHepTopTagCHS = cms.EDProducer("JetCorrFactorsProducer",
+    emf = cms.bool(False),
+    extraJPTOffset = cms.string('L1FastJet'),
+    flavorType = cms.string('J'),
+    levels = cms.vstring('L1FastJet', 
+        'L2Relative', 
+        'L3Absolute'),
+    payload = cms.string('AK8PFchs'),
+    primaryVertices = cms.InputTag("offlineSlimmedPrimaryVertices"),
+    rho = cms.InputTag("fixedGridRhoFastjetAll"),
+    src = cms.InputTag("hepTopTagCHS"),
+    useNPV = cms.bool(True),
+    useRho = cms.bool(True)
+)
+
+
+process.patJetCorrFactorsHepTopTagCHSSubjets = cms.EDProducer("JetCorrFactorsProducer",
+    emf = cms.bool(False),
+    extraJPTOffset = cms.string('L1FastJet'),
+    flavorType = cms.string('J'),
+    levels = cms.vstring('L1FastJet', 
+        'L2Relative', 
+        'L3Absolute'),
+    payload = cms.string('AK4PFchs'),
+    primaryVertices = cms.InputTag("offlineSlimmedPrimaryVertices"),
+    rho = cms.InputTag("fixedGridRhoFastjetAll"),
+    src = cms.InputTag("hepTopTagCHS","SubJets"),
+    useNPV = cms.bool(True),
+    useRho = cms.bool(True)
+)
+
+
 process.patJetFlavourAssociationAK8PFCHS = cms.EDProducer("JetFlavourClustering",
     bHadrons = cms.InputTag("patJetPartons","bHadrons"),
     cHadrons = cms.InputTag("patJetPartons","cHadrons"),
@@ -4262,6 +4295,34 @@ process.patJetFlavourAssociationCa15PuppiJetsSoftDropSubjets = cms.EDProducer("J
 )
 
 
+process.patJetFlavourAssociationHepTopTagCHS = cms.EDProducer("JetFlavourClustering",
+    bHadrons = cms.InputTag("patJetPartons","bHadrons"),
+    cHadrons = cms.InputTag("patJetPartons","cHadrons"),
+    ghostRescaling = cms.double(1e-18),
+    hadronFlavourHasPriority = cms.bool(False),
+    jetAlgorithm = cms.string('CambridgeAachen'),
+    jets = cms.InputTag("hepTopTagCHS"),
+    leptons = cms.InputTag("patJetPartons","leptons"),
+    partons = cms.InputTag("patJetPartons","algorithmicPartons"),
+    rParam = cms.double(1.5)
+)
+
+
+process.patJetFlavourAssociationHepTopTagCHSSubjets = cms.EDProducer("JetFlavourClustering",
+    bHadrons = cms.InputTag("patJetPartons","bHadrons"),
+    cHadrons = cms.InputTag("patJetPartons","cHadrons"),
+    ghostRescaling = cms.double(1e-18),
+    groomedJets = cms.InputTag("hepTopTagCHS"),
+    hadronFlavourHasPriority = cms.bool(False),
+    jetAlgorithm = cms.string('CambridgeAachen'),
+    jets = cms.InputTag("ca15CHSJets"),
+    leptons = cms.InputTag("patJetPartons","leptons"),
+    partons = cms.InputTag("patJetPartons","algorithmicPartons"),
+    rParam = cms.double(1.5),
+    subjets = cms.InputTag("hepTopTagCHS","SubJets")
+)
+
+
 process.patJetFlavourAssociationLegacyAK8PFCHS = cms.EDProducer("JetFlavourIdentifier",
     physicsDefinition = cms.bool(False),
     srcByReference = cms.InputTag("patJetPartonAssociationLegacyAK8PFCHS")
@@ -4382,6 +4443,18 @@ process.patJetFlavourAssociationLegacyCa15PuppiJetsSoftDropSubjets = cms.EDProdu
 )
 
 
+process.patJetFlavourAssociationLegacyHepTopTagCHS = cms.EDProducer("JetFlavourIdentifier",
+    physicsDefinition = cms.bool(False),
+    srcByReference = cms.InputTag("patJetPartonAssociationLegacyHepTopTagCHS")
+)
+
+
+process.patJetFlavourAssociationLegacyHepTopTagCHSSubjets = cms.EDProducer("JetFlavourIdentifier",
+    physicsDefinition = cms.bool(False),
+    srcByReference = cms.InputTag("patJetPartonAssociationLegacyHepTopTagCHSSubjets")
+)
+
+
 process.patJetGenJetMatchAK8PFCHS = cms.EDProducer("GenJetMatcher",
     checkCharge = cms.bool(False),
     matched = cms.InputTag("slimmedGenJetsAK8"),
@@ -4408,7 +4481,7 @@ process.patJetGenJetMatchAK8PFPUPPI = cms.EDProducer("GenJetMatcher",
 
 process.patJetGenJetMatchAk8CHSJets = cms.EDProducer("GenJetMatcher",
     checkCharge = cms.bool(False),
-    matched = cms.InputTag("slimmedGenJets"),
+    matched = cms.InputTag("ak8GenJets"),
     maxDeltaR = cms.double(0.8),
     mcPdgId = cms.vint32(),
     mcStatus = cms.vint32(),
@@ -4432,7 +4505,7 @@ process.patJetGenJetMatchAk8CHSJetsPruned = cms.EDProducer("GenJetMatcher",
 
 process.patJetGenJetMatchAk8CHSJetsPrunedSubjets = cms.EDProducer("GenJetMatcher",
     checkCharge = cms.bool(False),
-    matched = cms.InputTag("slimmedGenJets"),
+    matched = cms.InputTag("ak8GenJetsPruned","SubJets"),
     maxDeltaR = cms.double(0.8),
     mcPdgId = cms.vint32(),
     mcStatus = cms.vint32(),
@@ -4456,7 +4529,7 @@ process.patJetGenJetMatchAk8CHSJetsSoftDrop = cms.EDProducer("GenJetMatcher",
 
 process.patJetGenJetMatchAk8CHSJetsSoftDropSubjets = cms.EDProducer("GenJetMatcher",
     checkCharge = cms.bool(False),
-    matched = cms.InputTag("slimmedGenJets"),
+    matched = cms.InputTag("ak8GenJetsSoftDrop","SubJets"),
     maxDeltaR = cms.double(0.8),
     mcPdgId = cms.vint32(),
     mcStatus = cms.vint32(),
@@ -4468,7 +4541,7 @@ process.patJetGenJetMatchAk8CHSJetsSoftDropSubjets = cms.EDProducer("GenJetMatch
 
 process.patJetGenJetMatchAk8PuppiJetsFat = cms.EDProducer("GenJetMatcher",
     checkCharge = cms.bool(False),
-    matched = cms.InputTag("slimmedGenJets"),
+    matched = cms.InputTag("ak8GenJetsFat"),
     maxDeltaR = cms.double(0.8),
     mcPdgId = cms.vint32(),
     mcStatus = cms.vint32(),
@@ -4492,7 +4565,7 @@ process.patJetGenJetMatchAk8PuppiJetsSoftDrop = cms.EDProducer("GenJetMatcher",
 
 process.patJetGenJetMatchAk8PuppiJetsSoftDropSubjets = cms.EDProducer("GenJetMatcher",
     checkCharge = cms.bool(False),
-    matched = cms.InputTag("slimmedGenJets"),
+    matched = cms.InputTag("ak8GenJetsSoftDrop","SubJets"),
     maxDeltaR = cms.double(0.8),
     mcPdgId = cms.vint32(),
     mcStatus = cms.vint32(),
@@ -4504,7 +4577,7 @@ process.patJetGenJetMatchAk8PuppiJetsSoftDropSubjets = cms.EDProducer("GenJetMat
 
 process.patJetGenJetMatchCa15CHSJets = cms.EDProducer("GenJetMatcher",
     checkCharge = cms.bool(False),
-    matched = cms.InputTag("slimmedGenJets"),
+    matched = cms.InputTag("ca15GenJets"),
     maxDeltaR = cms.double(1.5),
     mcPdgId = cms.vint32(),
     mcStatus = cms.vint32(),
@@ -4528,7 +4601,7 @@ process.patJetGenJetMatchCa15CHSJetsFiltered = cms.EDProducer("GenJetMatcher",
 
 process.patJetGenJetMatchCa15CHSJetsFilteredSubjets = cms.EDProducer("GenJetMatcher",
     checkCharge = cms.bool(False),
-    matched = cms.InputTag("slimmedGenJets"),
+    matched = cms.InputTag("ca15GenJetsFiltered","SubJets"),
     maxDeltaR = cms.double(1.5),
     mcPdgId = cms.vint32(),
     mcStatus = cms.vint32(),
@@ -4552,7 +4625,7 @@ process.patJetGenJetMatchCa15CHSJetsPruned = cms.EDProducer("GenJetMatcher",
 
 process.patJetGenJetMatchCa15CHSJetsPrunedSubjets = cms.EDProducer("GenJetMatcher",
     checkCharge = cms.bool(False),
-    matched = cms.InputTag("slimmedGenJets"),
+    matched = cms.InputTag("ca15GenJetsPruned","SubJets"),
     maxDeltaR = cms.double(1.5),
     mcPdgId = cms.vint32(),
     mcStatus = cms.vint32(),
@@ -4576,7 +4649,7 @@ process.patJetGenJetMatchCa15CHSJetsSoftDrop = cms.EDProducer("GenJetMatcher",
 
 process.patJetGenJetMatchCa15CHSJetsSoftDropSubjets = cms.EDProducer("GenJetMatcher",
     checkCharge = cms.bool(False),
-    matched = cms.InputTag("slimmedGenJets"),
+    matched = cms.InputTag("ca15GenJetsSoftDrop","SubJets"),
     maxDeltaR = cms.double(1.5),
     mcPdgId = cms.vint32(),
     mcStatus = cms.vint32(),
@@ -4588,7 +4661,7 @@ process.patJetGenJetMatchCa15CHSJetsSoftDropSubjets = cms.EDProducer("GenJetMatc
 
 process.patJetGenJetMatchCa15PuppiJets = cms.EDProducer("GenJetMatcher",
     checkCharge = cms.bool(False),
-    matched = cms.InputTag("slimmedGenJets"),
+    matched = cms.InputTag("ca15GenJets"),
     maxDeltaR = cms.double(1.5),
     mcPdgId = cms.vint32(),
     mcStatus = cms.vint32(),
@@ -4612,13 +4685,37 @@ process.patJetGenJetMatchCa15PuppiJetsSoftDrop = cms.EDProducer("GenJetMatcher",
 
 process.patJetGenJetMatchCa15PuppiJetsSoftDropSubjets = cms.EDProducer("GenJetMatcher",
     checkCharge = cms.bool(False),
-    matched = cms.InputTag("slimmedGenJets"),
+    matched = cms.InputTag("ca15GenJetsSoftDrop","SubJets"),
     maxDeltaR = cms.double(1.5),
     mcPdgId = cms.vint32(),
     mcStatus = cms.vint32(),
     resolveAmbiguities = cms.bool(True),
     resolveByMatchQuality = cms.bool(False),
     src = cms.InputTag("ca15PuppiJetsSoftDrop","SubJets")
+)
+
+
+process.patJetGenJetMatchHepTopTagCHS = cms.EDProducer("GenJetMatcher",
+    checkCharge = cms.bool(False),
+    matched = cms.InputTag("slimmedGenJets"),
+    maxDeltaR = cms.double(1.5),
+    mcPdgId = cms.vint32(),
+    mcStatus = cms.vint32(),
+    resolveAmbiguities = cms.bool(True),
+    resolveByMatchQuality = cms.bool(False),
+    src = cms.InputTag("hepTopTagCHS")
+)
+
+
+process.patJetGenJetMatchHepTopTagCHSSubjets = cms.EDProducer("GenJetMatcher",
+    checkCharge = cms.bool(False),
+    matched = cms.InputTag("slimmedGenJets"),
+    maxDeltaR = cms.double(1.5),
+    mcPdgId = cms.vint32(),
+    mcStatus = cms.vint32(),
+    resolveAmbiguities = cms.bool(True),
+    resolveByMatchQuality = cms.bool(False),
+    src = cms.InputTag("hepTopTagCHS","SubJets")
 )
 
 
@@ -4758,6 +4855,20 @@ process.patJetPartonAssociationLegacyCa15PuppiJetsSoftDrop = cms.EDProducer("Jet
 process.patJetPartonAssociationLegacyCa15PuppiJetsSoftDropSubjets = cms.EDProducer("JetPartonMatcher",
     coneSizeToAssociate = cms.double(0.3),
     jets = cms.InputTag("ca15PuppiJetsSoftDrop","SubJets"),
+    partons = cms.InputTag("patJetPartonsLegacy")
+)
+
+
+process.patJetPartonAssociationLegacyHepTopTagCHS = cms.EDProducer("JetPartonMatcher",
+    coneSizeToAssociate = cms.double(0.3),
+    jets = cms.InputTag("hepTopTagCHS"),
+    partons = cms.InputTag("patJetPartonsLegacy")
+)
+
+
+process.patJetPartonAssociationLegacyHepTopTagCHSSubjets = cms.EDProducer("JetPartonMatcher",
+    coneSizeToAssociate = cms.double(0.3),
+    jets = cms.InputTag("hepTopTagCHS","SubJets"),
     partons = cms.InputTag("patJetPartonsLegacy")
 )
 
@@ -5039,6 +5150,34 @@ process.patJetPartonMatchCa15PuppiJetsSoftDropSubjets = cms.EDProducer("MCMatche
     resolveAmbiguities = cms.bool(True),
     resolveByMatchQuality = cms.bool(False),
     src = cms.InputTag("ca15PuppiJetsSoftDrop","SubJets")
+)
+
+
+process.patJetPartonMatchHepTopTagCHS = cms.EDProducer("MCMatcher",
+    checkCharge = cms.bool(False),
+    matched = cms.InputTag("prunedGenParticles"),
+    maxDPtRel = cms.double(3.0),
+    maxDeltaR = cms.double(0.4),
+    mcPdgId = cms.vint32(1, 2, 3, 4, 5, 
+        21),
+    mcStatus = cms.vint32(3, 23),
+    resolveAmbiguities = cms.bool(True),
+    resolveByMatchQuality = cms.bool(False),
+    src = cms.InputTag("hepTopTagCHS")
+)
+
+
+process.patJetPartonMatchHepTopTagCHSSubjets = cms.EDProducer("MCMatcher",
+    checkCharge = cms.bool(False),
+    matched = cms.InputTag("prunedGenParticles"),
+    maxDPtRel = cms.double(3.0),
+    maxDeltaR = cms.double(0.4),
+    mcPdgId = cms.vint32(1, 2, 3, 4, 5, 
+        21),
+    mcStatus = cms.vint32(3, 23),
+    resolveAmbiguities = cms.bool(True),
+    resolveByMatchQuality = cms.bool(False),
+    src = cms.InputTag("hepTopTagCHS","SubJets")
 )
 
 
@@ -6275,6 +6414,128 @@ process.patJetsCa15PuppiJetsSoftDropSubjets = cms.EDProducer("PATJetProducer",
 )
 
 
+process.patJetsHepTopTagCHS = cms.EDProducer("PATJetProducer",
+    JetFlavourInfoSource = cms.InputTag("patJetFlavourAssociationHepTopTagCHS"),
+    JetPartonMapSource = cms.InputTag("patJetFlavourAssociationLegacyHepTopTagCHS"),
+    addAssociatedTracks = cms.bool(False),
+    addBTagInfo = cms.bool(True),
+    addDiscriminators = cms.bool(True),
+    addEfficiencies = cms.bool(False),
+    addGenJetMatch = cms.bool(False),
+    addGenPartonMatch = cms.bool(True),
+    addJetCharge = cms.bool(False),
+    addJetCorrFactors = cms.bool(True),
+    addJetFlavourInfo = cms.bool(True),
+    addJetID = cms.bool(False),
+    addPartonJetMatch = cms.bool(False),
+    addResolutions = cms.bool(False),
+    addTagInfos = cms.bool(True),
+    discriminatorSources = cms.VInputTag(cms.InputTag("pfJetProbabilityBJetTagsHepTopTagCHS"), cms.InputTag("pfJetBProbabilityBJetTagsHepTopTagCHS"), cms.InputTag("pfSimpleSecondaryVertexHighEffBJetTagsHepTopTagCHS"), cms.InputTag("pfSimpleSecondaryVertexHighPurBJetTagsHepTopTagCHS"), cms.InputTag("pfCombinedInclusiveSecondaryVertexV2BJetTagsHepTopTagCHS"), 
+        cms.InputTag("pfCombinedMVAV2BJetTagsHepTopTagCHS"), cms.InputTag("pfBoostedDoubleSecondaryVertexAK8BJetTagsHepTopTagCHS"), cms.InputTag("pfBoostedDoubleSecondaryVertexCA15BJetTagsHepTopTagCHS")),
+    efficiencies = cms.PSet(
+
+    ),
+    embedGenJetMatch = cms.bool(True),
+    embedGenPartonMatch = cms.bool(True),
+    embedPFCandidates = cms.bool(False),
+    genJetMatch = cms.InputTag("patJetGenJetMatchHepTopTagCHS"),
+    genPartonMatch = cms.InputTag("patJetPartonMatchHepTopTagCHS"),
+    getJetMCFlavour = cms.bool(False),
+    jetChargeSource = cms.InputTag(""),
+    jetCorrFactorsSource = cms.VInputTag(cms.InputTag("patJetCorrFactorsHepTopTagCHS")),
+    jetIDMap = cms.InputTag("ak4JetID"),
+    jetSource = cms.InputTag("hepTopTagCHS"),
+    partonJetSource = cms.InputTag("NOT_IMPLEMENTED"),
+    resolutions = cms.PSet(
+
+    ),
+    tagInfoSources = cms.VInputTag(cms.InputTag("hepTopTagCHS")),
+    trackAssociationSource = cms.InputTag(""),
+    useLegacyJetMCFlavour = cms.bool(False),
+    userData = cms.PSet(
+        userCands = cms.PSet(
+            src = cms.VInputTag("")
+        ),
+        userClasses = cms.PSet(
+            src = cms.VInputTag("")
+        ),
+        userFloats = cms.PSet(
+            src = cms.VInputTag("")
+        ),
+        userFunctionLabels = cms.vstring(),
+        userFunctions = cms.vstring(),
+        userInts = cms.PSet(
+            src = cms.VInputTag("")
+        )
+    )
+)
+
+
+process.patJetsHepTopTagCHSPacked = cms.EDProducer("BoostedJetMerger",
+    jetSrc = cms.InputTag("patJetsHepTopTagCHS"),
+    subjetSrc = cms.InputTag("patJetsHepTopTagCHSSubjets")
+)
+
+
+process.patJetsHepTopTagCHSSubjets = cms.EDProducer("PATJetProducer",
+    JetFlavourInfoSource = cms.InputTag("patJetFlavourAssociationHepTopTagCHSSubjets","SubJets"),
+    JetPartonMapSource = cms.InputTag("patJetFlavourAssociationLegacyHepTopTagCHSSubjets"),
+    addAssociatedTracks = cms.bool(False),
+    addBTagInfo = cms.bool(True),
+    addDiscriminators = cms.bool(True),
+    addEfficiencies = cms.bool(False),
+    addGenJetMatch = cms.bool(False),
+    addGenPartonMatch = cms.bool(True),
+    addJetCharge = cms.bool(False),
+    addJetCorrFactors = cms.bool(True),
+    addJetFlavourInfo = cms.bool(True),
+    addJetID = cms.bool(False),
+    addPartonJetMatch = cms.bool(False),
+    addResolutions = cms.bool(False),
+    addTagInfos = cms.bool(True),
+    discriminatorSources = cms.VInputTag(cms.InputTag("pfJetProbabilityBJetTagsHepTopTagCHSSubjets"), cms.InputTag("pfJetBProbabilityBJetTagsHepTopTagCHSSubjets"), cms.InputTag("pfSimpleSecondaryVertexHighEffBJetTagsHepTopTagCHSSubjets"), cms.InputTag("pfSimpleSecondaryVertexHighPurBJetTagsHepTopTagCHSSubjets"), cms.InputTag("pfCombinedInclusiveSecondaryVertexV2BJetTagsHepTopTagCHSSubjets"), 
+        cms.InputTag("pfCombinedMVAV2BJetTagsHepTopTagCHSSubjets"), cms.InputTag("pfBoostedDoubleSecondaryVertexAK8BJetTagsHepTopTagCHSSubjets"), cms.InputTag("pfBoostedDoubleSecondaryVertexCA15BJetTagsHepTopTagCHSSubjets")),
+    efficiencies = cms.PSet(
+
+    ),
+    embedGenJetMatch = cms.bool(True),
+    embedGenPartonMatch = cms.bool(True),
+    embedPFCandidates = cms.bool(False),
+    genJetMatch = cms.InputTag("patJetGenJetMatchHepTopTagCHSSubjets"),
+    genPartonMatch = cms.InputTag("patJetPartonMatchHepTopTagCHSSubjets"),
+    getJetMCFlavour = cms.bool(True),
+    jetChargeSource = cms.InputTag(""),
+    jetCorrFactorsSource = cms.VInputTag(cms.InputTag("patJetCorrFactorsHepTopTagCHSSubjets")),
+    jetIDMap = cms.InputTag("ak4JetID"),
+    jetSource = cms.InputTag("hepTopTagCHS","SubJets"),
+    partonJetSource = cms.InputTag("NOT_IMPLEMENTED"),
+    resolutions = cms.PSet(
+
+    ),
+    tagInfoSources = cms.VInputTag(cms.InputTag("pfImpactParameterTagInfosHepTopTagCHSSubjets"), cms.InputTag("pfSecondaryVertexTagInfosHepTopTagCHSSubjets"), cms.InputTag("pfInclusiveSecondaryVertexFinderTagInfosHepTopTagCHSSubjets"), cms.InputTag("softPFMuonsTagInfosHepTopTagCHSSubjets"), cms.InputTag("softPFElectronsTagInfosHepTopTagCHSSubjets"), 
+        cms.InputTag("pfBoostedDoubleSVAK8TagInfosHepTopTagCHSSubjets"), cms.InputTag("pfImpactParameterAK8TagInfosHepTopTagCHSSubjets"), cms.InputTag("pfInclusiveSecondaryVertexFinderAK8TagInfosHepTopTagCHSSubjets"), cms.InputTag("pfBoostedDoubleSVCA15TagInfosHepTopTagCHSSubjets"), cms.InputTag("pfImpactParameterCA15TagInfosHepTopTagCHSSubjets"), 
+        cms.InputTag("pfInclusiveSecondaryVertexFinderCA15TagInfosHepTopTagCHSSubjets")),
+    trackAssociationSource = cms.InputTag(""),
+    useLegacyJetMCFlavour = cms.bool(False),
+    userData = cms.PSet(
+        userCands = cms.PSet(
+            src = cms.VInputTag("")
+        ),
+        userClasses = cms.PSet(
+            src = cms.VInputTag("")
+        ),
+        userFloats = cms.PSet(
+            src = cms.VInputTag("")
+        ),
+        userFunctionLabels = cms.vstring(),
+        userFunctions = cms.vstring(),
+        userInts = cms.PSet(
+            src = cms.VInputTag("")
+        )
+    )
+)
+
+
 process.patPFMet = cms.EDProducer("PATMETProducer",
     addEfficiencies = cms.bool(False),
     addGenMET = cms.bool(False),
@@ -7073,6 +7334,84 @@ process.pfBoostedDoubleSVAK8TagInfosCa15PuppiJetsSoftDropSubjets = cms.EDProduce
 )
 
 
+process.pfBoostedDoubleSVAK8TagInfosHepTopTagCHS = cms.EDProducer("BoostedDoubleSVProducer",
+    R0 = cms.double(0.8),
+    beta = cms.double(1.0),
+    maxSVDeltaRToJet = cms.double(0.7),
+    svTagInfos = cms.InputTag("pfInclusiveSecondaryVertexFinderAK8TagInfosHepTopTagCHS"),
+    trackPairV0Filter = cms.PSet(
+        k0sMassWindow = cms.double(0.03)
+    ),
+    trackSelection = cms.PSet(
+        a_dR = cms.double(-0.001053),
+        a_pT = cms.double(0.005263),
+        b_dR = cms.double(0.6263),
+        b_pT = cms.double(0.3684),
+        jetDeltaRMax = cms.double(0.8),
+        maxDecayLen = cms.double(5),
+        maxDistToAxis = cms.double(0.07),
+        max_pT = cms.double(500),
+        max_pT_dRcut = cms.double(0.1),
+        max_pT_trackPTcut = cms.double(3),
+        min_pT = cms.double(120),
+        min_pT_dRcut = cms.double(0.5),
+        normChi2Max = cms.double(99999.9),
+        pixelHitsMin = cms.uint32(0),
+        ptMin = cms.double(0.0),
+        qualityClass = cms.string('any'),
+        sip2dSigMax = cms.double(99999.9),
+        sip2dSigMin = cms.double(-99999.9),
+        sip2dValMax = cms.double(99999.9),
+        sip2dValMin = cms.double(-99999.9),
+        sip3dSigMax = cms.double(99999.9),
+        sip3dSigMin = cms.double(-99999.9),
+        sip3dValMax = cms.double(99999.9),
+        sip3dValMin = cms.double(-99999.9),
+        totalHitsMin = cms.uint32(0),
+        useVariableJTA = cms.bool(False)
+    )
+)
+
+
+process.pfBoostedDoubleSVAK8TagInfosHepTopTagCHSSubjets = cms.EDProducer("BoostedDoubleSVProducer",
+    R0 = cms.double(0.8),
+    beta = cms.double(1.0),
+    maxSVDeltaRToJet = cms.double(0.7),
+    svTagInfos = cms.InputTag("pfInclusiveSecondaryVertexFinderAK8TagInfosHepTopTagCHSSubjets"),
+    trackPairV0Filter = cms.PSet(
+        k0sMassWindow = cms.double(0.03)
+    ),
+    trackSelection = cms.PSet(
+        a_dR = cms.double(-0.001053),
+        a_pT = cms.double(0.005263),
+        b_dR = cms.double(0.6263),
+        b_pT = cms.double(0.3684),
+        jetDeltaRMax = cms.double(0.8),
+        maxDecayLen = cms.double(5),
+        maxDistToAxis = cms.double(0.07),
+        max_pT = cms.double(500),
+        max_pT_dRcut = cms.double(0.1),
+        max_pT_trackPTcut = cms.double(3),
+        min_pT = cms.double(120),
+        min_pT_dRcut = cms.double(0.5),
+        normChi2Max = cms.double(99999.9),
+        pixelHitsMin = cms.uint32(0),
+        ptMin = cms.double(0.0),
+        qualityClass = cms.string('any'),
+        sip2dSigMax = cms.double(99999.9),
+        sip2dSigMin = cms.double(-99999.9),
+        sip2dValMax = cms.double(99999.9),
+        sip2dValMin = cms.double(-99999.9),
+        sip3dSigMax = cms.double(99999.9),
+        sip3dSigMin = cms.double(-99999.9),
+        sip3dValMax = cms.double(99999.9),
+        sip3dValMin = cms.double(-99999.9),
+        totalHitsMin = cms.uint32(0),
+        useVariableJTA = cms.bool(False)
+    )
+)
+
+
 process.pfBoostedDoubleSVCA15TagInfosAk8CHSJets = cms.EDProducer("BoostedDoubleSVProducer",
     R0 = cms.double(1.5),
     beta = cms.double(1.0),
@@ -7775,6 +8114,84 @@ process.pfBoostedDoubleSVCA15TagInfosCa15PuppiJetsSoftDropSubjets = cms.EDProduc
 )
 
 
+process.pfBoostedDoubleSVCA15TagInfosHepTopTagCHS = cms.EDProducer("BoostedDoubleSVProducer",
+    R0 = cms.double(1.5),
+    beta = cms.double(1.0),
+    maxSVDeltaRToJet = cms.double(1.0),
+    svTagInfos = cms.InputTag("pfInclusiveSecondaryVertexFinderCA15TagInfosHepTopTagCHS"),
+    trackPairV0Filter = cms.PSet(
+        k0sMassWindow = cms.double(0.03)
+    ),
+    trackSelection = cms.PSet(
+        a_dR = cms.double(-0.001053),
+        a_pT = cms.double(0.005263),
+        b_dR = cms.double(0.6263),
+        b_pT = cms.double(0.3684),
+        jetDeltaRMax = cms.double(1.5),
+        maxDecayLen = cms.double(5),
+        maxDistToAxis = cms.double(0.07),
+        max_pT = cms.double(500),
+        max_pT_dRcut = cms.double(0.1),
+        max_pT_trackPTcut = cms.double(3),
+        min_pT = cms.double(120),
+        min_pT_dRcut = cms.double(0.5),
+        normChi2Max = cms.double(99999.9),
+        pixelHitsMin = cms.uint32(0),
+        ptMin = cms.double(0.0),
+        qualityClass = cms.string('any'),
+        sip2dSigMax = cms.double(99999.9),
+        sip2dSigMin = cms.double(-99999.9),
+        sip2dValMax = cms.double(99999.9),
+        sip2dValMin = cms.double(-99999.9),
+        sip3dSigMax = cms.double(99999.9),
+        sip3dSigMin = cms.double(-99999.9),
+        sip3dValMax = cms.double(99999.9),
+        sip3dValMin = cms.double(-99999.9),
+        totalHitsMin = cms.uint32(0),
+        useVariableJTA = cms.bool(False)
+    )
+)
+
+
+process.pfBoostedDoubleSVCA15TagInfosHepTopTagCHSSubjets = cms.EDProducer("BoostedDoubleSVProducer",
+    R0 = cms.double(1.5),
+    beta = cms.double(1.0),
+    maxSVDeltaRToJet = cms.double(1.0),
+    svTagInfos = cms.InputTag("pfInclusiveSecondaryVertexFinderCA15TagInfosHepTopTagCHSSubjets"),
+    trackPairV0Filter = cms.PSet(
+        k0sMassWindow = cms.double(0.03)
+    ),
+    trackSelection = cms.PSet(
+        a_dR = cms.double(-0.001053),
+        a_pT = cms.double(0.005263),
+        b_dR = cms.double(0.6263),
+        b_pT = cms.double(0.3684),
+        jetDeltaRMax = cms.double(1.5),
+        maxDecayLen = cms.double(5),
+        maxDistToAxis = cms.double(0.07),
+        max_pT = cms.double(500),
+        max_pT_dRcut = cms.double(0.1),
+        max_pT_trackPTcut = cms.double(3),
+        min_pT = cms.double(120),
+        min_pT_dRcut = cms.double(0.5),
+        normChi2Max = cms.double(99999.9),
+        pixelHitsMin = cms.uint32(0),
+        ptMin = cms.double(0.0),
+        qualityClass = cms.string('any'),
+        sip2dSigMax = cms.double(99999.9),
+        sip2dSigMin = cms.double(-99999.9),
+        sip2dValMax = cms.double(99999.9),
+        sip2dValMin = cms.double(-99999.9),
+        sip3dSigMax = cms.double(99999.9),
+        sip3dSigMin = cms.double(-99999.9),
+        sip3dValMax = cms.double(99999.9),
+        sip3dValMin = cms.double(-99999.9),
+        totalHitsMin = cms.uint32(0),
+        useVariableJTA = cms.bool(False)
+    )
+)
+
+
 process.pfBoostedDoubleSecondaryVertexAK8BJetTagsAk8CHSJets = cms.EDProducer("JetTagProducer",
     jetTagComputer = cms.string('candidateBoostedDoubleSecondaryVertexAK8Computer'),
     tagInfos = cms.VInputTag(cms.InputTag("pfBoostedDoubleSVAK8TagInfosAk8CHSJets"))
@@ -7880,6 +8297,18 @@ process.pfBoostedDoubleSecondaryVertexAK8BJetTagsCa15PuppiJetsSoftDrop = cms.EDP
 process.pfBoostedDoubleSecondaryVertexAK8BJetTagsCa15PuppiJetsSoftDropSubjets = cms.EDProducer("JetTagProducer",
     jetTagComputer = cms.string('candidateBoostedDoubleSecondaryVertexAK8Computer'),
     tagInfos = cms.VInputTag(cms.InputTag("pfBoostedDoubleSVAK8TagInfosCa15PuppiJetsSoftDropSubjets"))
+)
+
+
+process.pfBoostedDoubleSecondaryVertexAK8BJetTagsHepTopTagCHS = cms.EDProducer("JetTagProducer",
+    jetTagComputer = cms.string('candidateBoostedDoubleSecondaryVertexAK8Computer'),
+    tagInfos = cms.VInputTag(cms.InputTag("pfBoostedDoubleSVAK8TagInfosHepTopTagCHS"))
+)
+
+
+process.pfBoostedDoubleSecondaryVertexAK8BJetTagsHepTopTagCHSSubjets = cms.EDProducer("JetTagProducer",
+    jetTagComputer = cms.string('candidateBoostedDoubleSecondaryVertexAK8Computer'),
+    tagInfos = cms.VInputTag(cms.InputTag("pfBoostedDoubleSVAK8TagInfosHepTopTagCHSSubjets"))
 )
 
 
@@ -7991,6 +8420,18 @@ process.pfBoostedDoubleSecondaryVertexCA15BJetTagsCa15PuppiJetsSoftDropSubjets =
 )
 
 
+process.pfBoostedDoubleSecondaryVertexCA15BJetTagsHepTopTagCHS = cms.EDProducer("JetTagProducer",
+    jetTagComputer = cms.string('candidateBoostedDoubleSecondaryVertexCA15Computer'),
+    tagInfos = cms.VInputTag(cms.InputTag("pfBoostedDoubleSVCA15TagInfosHepTopTagCHS"))
+)
+
+
+process.pfBoostedDoubleSecondaryVertexCA15BJetTagsHepTopTagCHSSubjets = cms.EDProducer("JetTagProducer",
+    jetTagComputer = cms.string('candidateBoostedDoubleSecondaryVertexCA15Computer'),
+    tagInfos = cms.VInputTag(cms.InputTag("pfBoostedDoubleSVCA15TagInfosHepTopTagCHSSubjets"))
+)
+
+
 process.pfCombinedInclusiveSecondaryVertexV2BJetTagsAk8CHSJets = cms.EDProducer("JetTagProducer",
     jetTagComputer = cms.string('candidateCombinedSecondaryVertexV2Computer'),
     tagInfos = cms.VInputTag(cms.InputTag("pfImpactParameterTagInfosAk8CHSJets"), cms.InputTag("pfInclusiveSecondaryVertexFinderTagInfosAk8CHSJets"))
@@ -8099,6 +8540,18 @@ process.pfCombinedInclusiveSecondaryVertexV2BJetTagsCa15PuppiJetsSoftDropSubjets
 )
 
 
+process.pfCombinedInclusiveSecondaryVertexV2BJetTagsHepTopTagCHS = cms.EDProducer("JetTagProducer",
+    jetTagComputer = cms.string('candidateCombinedSecondaryVertexV2Computer'),
+    tagInfos = cms.VInputTag(cms.InputTag("pfImpactParameterTagInfosHepTopTagCHS"), cms.InputTag("pfInclusiveSecondaryVertexFinderTagInfosHepTopTagCHS"))
+)
+
+
+process.pfCombinedInclusiveSecondaryVertexV2BJetTagsHepTopTagCHSSubjets = cms.EDProducer("JetTagProducer",
+    jetTagComputer = cms.string('candidateCombinedSecondaryVertexV2Computer'),
+    tagInfos = cms.VInputTag(cms.InputTag("pfImpactParameterTagInfosHepTopTagCHSSubjets"), cms.InputTag("pfInclusiveSecondaryVertexFinderTagInfosHepTopTagCHSSubjets"))
+)
+
+
 process.pfCombinedMVAV2BJetTagsAk8CHSJets = cms.EDProducer("JetTagProducer",
     jetTagComputer = cms.string('candidateCombinedMVAV2Computer'),
     tagInfos = cms.VInputTag(cms.InputTag("pfImpactParameterTagInfosAk8CHSJets"), cms.InputTag("pfSecondaryVertexTagInfosAk8CHSJets"), cms.InputTag("pfInclusiveSecondaryVertexFinderTagInfosAk8CHSJets"), cms.InputTag("softPFMuonsTagInfosAk8CHSJets"), cms.InputTag("softPFElectronsTagInfosAk8CHSJets"))
@@ -8204,6 +8657,18 @@ process.pfCombinedMVAV2BJetTagsCa15PuppiJetsSoftDrop = cms.EDProducer("JetTagPro
 process.pfCombinedMVAV2BJetTagsCa15PuppiJetsSoftDropSubjets = cms.EDProducer("JetTagProducer",
     jetTagComputer = cms.string('candidateCombinedMVAV2Computer'),
     tagInfos = cms.VInputTag(cms.InputTag("pfImpactParameterTagInfosCa15PuppiJetsSoftDropSubjets"), cms.InputTag("pfSecondaryVertexTagInfosCa15PuppiJetsSoftDropSubjets"), cms.InputTag("pfInclusiveSecondaryVertexFinderTagInfosCa15PuppiJetsSoftDropSubjets"), cms.InputTag("softPFMuonsTagInfosCa15PuppiJetsSoftDropSubjets"), cms.InputTag("softPFElectronsTagInfosCa15PuppiJetsSoftDropSubjets"))
+)
+
+
+process.pfCombinedMVAV2BJetTagsHepTopTagCHS = cms.EDProducer("JetTagProducer",
+    jetTagComputer = cms.string('candidateCombinedMVAV2Computer'),
+    tagInfos = cms.VInputTag(cms.InputTag("pfImpactParameterTagInfosHepTopTagCHS"), cms.InputTag("pfSecondaryVertexTagInfosHepTopTagCHS"), cms.InputTag("pfInclusiveSecondaryVertexFinderTagInfosHepTopTagCHS"), cms.InputTag("softPFMuonsTagInfosHepTopTagCHS"), cms.InputTag("softPFElectronsTagInfosHepTopTagCHS"))
+)
+
+
+process.pfCombinedMVAV2BJetTagsHepTopTagCHSSubjets = cms.EDProducer("JetTagProducer",
+    jetTagComputer = cms.string('candidateCombinedMVAV2Computer'),
+    tagInfos = cms.VInputTag(cms.InputTag("pfImpactParameterTagInfosHepTopTagCHSSubjets"), cms.InputTag("pfSecondaryVertexTagInfosHepTopTagCHSSubjets"), cms.InputTag("pfInclusiveSecondaryVertexFinderTagInfosHepTopTagCHSSubjets"), cms.InputTag("softPFMuonsTagInfosHepTopTagCHSSubjets"), cms.InputTag("softPFElectronsTagInfosHepTopTagCHSSubjets"))
 )
 
 
@@ -8562,6 +9027,47 @@ process.pfImpactParameterAK8TagInfosCa15PuppiJetsSoftDropSubjets = cms.EDProduce
     jetDirectionUsingGhostTrack = cms.bool(False),
     jetDirectionUsingTracks = cms.bool(False),
     jets = cms.InputTag("ca15PuppiJetsSoftDrop","SubJets"),
+    maxDeltaR = cms.double(0.8),
+    maximumChiSquared = cms.double(5.0),
+    maximumLongitudinalImpactParameter = cms.double(17.0),
+    maximumTransverseImpactParameter = cms.double(0.2),
+    minimumNumberOfHits = cms.int32(0),
+    minimumNumberOfPixelHits = cms.int32(1),
+    minimumTransverseMomentum = cms.double(1.0),
+    primaryVertex = cms.InputTag("offlineSlimmedPrimaryVertices"),
+    useTrackQuality = cms.bool(False)
+)
+
+
+process.pfImpactParameterAK8TagInfosHepTopTagCHS = cms.EDProducer("CandIPProducer",
+    candidates = cms.InputTag("packedPFCandidates"),
+    computeGhostTrack = cms.bool(False),
+    computeProbabilities = cms.bool(False),
+    ghostTrackPriorDeltaR = cms.double(0.03),
+    jetDirectionUsingGhostTrack = cms.bool(False),
+    jetDirectionUsingTracks = cms.bool(False),
+    jets = cms.InputTag("hepTopTagCHS"),
+    maxDeltaR = cms.double(0.8),
+    maximumChiSquared = cms.double(5.0),
+    maximumLongitudinalImpactParameter = cms.double(17.0),
+    maximumTransverseImpactParameter = cms.double(0.2),
+    minimumNumberOfHits = cms.int32(0),
+    minimumNumberOfPixelHits = cms.int32(1),
+    minimumTransverseMomentum = cms.double(1.0),
+    primaryVertex = cms.InputTag("offlineSlimmedPrimaryVertices"),
+    useTrackQuality = cms.bool(False)
+)
+
+
+process.pfImpactParameterAK8TagInfosHepTopTagCHSSubjets = cms.EDProducer("CandIPProducer",
+    candidates = cms.InputTag("packedPFCandidates"),
+    computeGhostTrack = cms.bool(False),
+    computeProbabilities = cms.bool(False),
+    explicitJTA = cms.bool(True),
+    ghostTrackPriorDeltaR = cms.double(0.03),
+    jetDirectionUsingGhostTrack = cms.bool(False),
+    jetDirectionUsingTracks = cms.bool(False),
+    jets = cms.InputTag("hepTopTagCHS","SubJets"),
     maxDeltaR = cms.double(0.8),
     maximumChiSquared = cms.double(5.0),
     maximumLongitudinalImpactParameter = cms.double(17.0),
@@ -8941,6 +9447,47 @@ process.pfImpactParameterCA15TagInfosCa15PuppiJetsSoftDropSubjets = cms.EDProduc
 )
 
 
+process.pfImpactParameterCA15TagInfosHepTopTagCHS = cms.EDProducer("CandIPProducer",
+    candidates = cms.InputTag("packedPFCandidates"),
+    computeGhostTrack = cms.bool(False),
+    computeProbabilities = cms.bool(False),
+    ghostTrackPriorDeltaR = cms.double(0.03),
+    jetDirectionUsingGhostTrack = cms.bool(False),
+    jetDirectionUsingTracks = cms.bool(False),
+    jets = cms.InputTag("hepTopTagCHS"),
+    maxDeltaR = cms.double(1.5),
+    maximumChiSquared = cms.double(5.0),
+    maximumLongitudinalImpactParameter = cms.double(17.0),
+    maximumTransverseImpactParameter = cms.double(0.2),
+    minimumNumberOfHits = cms.int32(0),
+    minimumNumberOfPixelHits = cms.int32(1),
+    minimumTransverseMomentum = cms.double(1.0),
+    primaryVertex = cms.InputTag("offlineSlimmedPrimaryVertices"),
+    useTrackQuality = cms.bool(False)
+)
+
+
+process.pfImpactParameterCA15TagInfosHepTopTagCHSSubjets = cms.EDProducer("CandIPProducer",
+    candidates = cms.InputTag("packedPFCandidates"),
+    computeGhostTrack = cms.bool(False),
+    computeProbabilities = cms.bool(False),
+    explicitJTA = cms.bool(True),
+    ghostTrackPriorDeltaR = cms.double(0.03),
+    jetDirectionUsingGhostTrack = cms.bool(False),
+    jetDirectionUsingTracks = cms.bool(False),
+    jets = cms.InputTag("hepTopTagCHS","SubJets"),
+    maxDeltaR = cms.double(1.5),
+    maximumChiSquared = cms.double(5.0),
+    maximumLongitudinalImpactParameter = cms.double(17.0),
+    maximumTransverseImpactParameter = cms.double(0.2),
+    minimumNumberOfHits = cms.int32(0),
+    minimumNumberOfPixelHits = cms.int32(1),
+    minimumTransverseMomentum = cms.double(1.0),
+    primaryVertex = cms.InputTag("offlineSlimmedPrimaryVertices"),
+    useTrackQuality = cms.bool(False)
+)
+
+
 process.pfImpactParameterTagInfosAk8CHSJets = cms.EDProducer("CandIPProducer",
     candidates = cms.InputTag("packedPFCandidates"),
     computeGhostTrack = cms.bool(True),
@@ -9296,6 +9843,47 @@ process.pfImpactParameterTagInfosCa15PuppiJetsSoftDropSubjets = cms.EDProducer("
     jetDirectionUsingGhostTrack = cms.bool(False),
     jetDirectionUsingTracks = cms.bool(False),
     jets = cms.InputTag("ca15PuppiJetsSoftDrop","SubJets"),
+    maxDeltaR = cms.double(0.4),
+    maximumChiSquared = cms.double(5.0),
+    maximumLongitudinalImpactParameter = cms.double(17.0),
+    maximumTransverseImpactParameter = cms.double(0.2),
+    minimumNumberOfHits = cms.int32(0),
+    minimumNumberOfPixelHits = cms.int32(1),
+    minimumTransverseMomentum = cms.double(1.0),
+    primaryVertex = cms.InputTag("offlineSlimmedPrimaryVertices"),
+    useTrackQuality = cms.bool(False)
+)
+
+
+process.pfImpactParameterTagInfosHepTopTagCHS = cms.EDProducer("CandIPProducer",
+    candidates = cms.InputTag("packedPFCandidates"),
+    computeGhostTrack = cms.bool(True),
+    computeProbabilities = cms.bool(True),
+    ghostTrackPriorDeltaR = cms.double(0.03),
+    jetDirectionUsingGhostTrack = cms.bool(False),
+    jetDirectionUsingTracks = cms.bool(False),
+    jets = cms.InputTag("hepTopTagCHS"),
+    maxDeltaR = cms.double(0.4),
+    maximumChiSquared = cms.double(5.0),
+    maximumLongitudinalImpactParameter = cms.double(17.0),
+    maximumTransverseImpactParameter = cms.double(0.2),
+    minimumNumberOfHits = cms.int32(0),
+    minimumNumberOfPixelHits = cms.int32(1),
+    minimumTransverseMomentum = cms.double(1.0),
+    primaryVertex = cms.InputTag("offlineSlimmedPrimaryVertices"),
+    useTrackQuality = cms.bool(False)
+)
+
+
+process.pfImpactParameterTagInfosHepTopTagCHSSubjets = cms.EDProducer("CandIPProducer",
+    candidates = cms.InputTag("packedPFCandidates"),
+    computeGhostTrack = cms.bool(True),
+    computeProbabilities = cms.bool(True),
+    explicitJTA = cms.bool(True),
+    ghostTrackPriorDeltaR = cms.double(0.03),
+    jetDirectionUsingGhostTrack = cms.bool(False),
+    jetDirectionUsingTracks = cms.bool(False),
+    jets = cms.InputTag("hepTopTagCHS","SubJets"),
     maxDeltaR = cms.double(0.4),
     maximumChiSquared = cms.double(5.0),
     maximumLongitudinalImpactParameter = cms.double(17.0),
@@ -10556,6 +11144,153 @@ process.pfInclusiveSecondaryVertexFinderAK8TagInfosCa15PuppiJetsSoftDropSubjets 
     minimumTrackWeight = cms.double(0.5),
     rParam = cms.double(1.5),
     trackIPTagInfos = cms.InputTag("pfImpactParameterAK8TagInfosCa15PuppiJetsSoftDropSubjets"),
+    trackSelection = cms.PSet(
+        a_dR = cms.double(-0.001053),
+        a_pT = cms.double(0.005263),
+        b_dR = cms.double(0.6263),
+        b_pT = cms.double(0.3684),
+        jetDeltaRMax = cms.double(0.8),
+        maxDecayLen = cms.double(99999.9),
+        maxDistToAxis = cms.double(0.2),
+        max_pT = cms.double(500),
+        max_pT_dRcut = cms.double(0.1),
+        max_pT_trackPTcut = cms.double(3),
+        min_pT = cms.double(120),
+        min_pT_dRcut = cms.double(0.5),
+        normChi2Max = cms.double(99999.9),
+        pixelHitsMin = cms.uint32(1),
+        ptMin = cms.double(1.0),
+        qualityClass = cms.string('any'),
+        sip2dSigMax = cms.double(99999.9),
+        sip2dSigMin = cms.double(-99999.9),
+        sip2dValMax = cms.double(99999.9),
+        sip2dValMin = cms.double(-99999.9),
+        sip3dSigMax = cms.double(99999.9),
+        sip3dSigMin = cms.double(-99999.9),
+        sip3dValMax = cms.double(99999.9),
+        sip3dValMin = cms.double(-99999.9),
+        totalHitsMin = cms.uint32(0),
+        useVariableJTA = cms.bool(False)
+    ),
+    trackSort = cms.string('sip3dSig'),
+    useExternalSV = cms.bool(True),
+    usePVError = cms.bool(True),
+    useSVClustering = cms.bool(True),
+    vertexCuts = cms.PSet(
+        distSig2dMax = cms.double(99999.9),
+        distSig2dMin = cms.double(2.0),
+        distSig3dMax = cms.double(99999.9),
+        distSig3dMin = cms.double(-99999.9),
+        distVal2dMax = cms.double(2.5),
+        distVal2dMin = cms.double(0.01),
+        distVal3dMax = cms.double(99999.9),
+        distVal3dMin = cms.double(-99999.9),
+        fracPV = cms.double(0.79),
+        massMax = cms.double(6.5),
+        maxDeltaRToJetAxis = cms.double(0.8),
+        minimumTrackWeight = cms.double(0.5),
+        multiplicityMin = cms.uint32(2),
+        useTrackWeights = cms.bool(True),
+        v0Filter = cms.PSet(
+            k0sMassWindow = cms.double(0.05)
+        )
+    ),
+    vertexReco = cms.PSet(
+        finder = cms.string('avr'),
+        minweight = cms.double(0.5),
+        primcut = cms.double(1.8),
+        seccut = cms.double(6.0),
+        smoothing = cms.bool(False),
+        weightthreshold = cms.double(0.001)
+    ),
+    vertexSelection = cms.PSet(
+        sortCriterium = cms.string('dist3dError')
+    )
+)
+
+
+process.pfInclusiveSecondaryVertexFinderAK8TagInfosHepTopTagCHS = cms.EDProducer("CandSecondaryVertexProducer",
+    beamSpotTag = cms.InputTag("offlineBeamSpot"),
+    constraint = cms.string('BeamSpot'),
+    extSVCollection = cms.InputTag("slimmedSecondaryVertices"),
+    extSVDeltaRToJet = cms.double(0.8),
+    minimumTrackWeight = cms.double(0.5),
+    trackIPTagInfos = cms.InputTag("pfImpactParameterAK8TagInfosHepTopTagCHS"),
+    trackSelection = cms.PSet(
+        a_dR = cms.double(-0.001053),
+        a_pT = cms.double(0.005263),
+        b_dR = cms.double(0.6263),
+        b_pT = cms.double(0.3684),
+        jetDeltaRMax = cms.double(0.8),
+        maxDecayLen = cms.double(99999.9),
+        maxDistToAxis = cms.double(0.2),
+        max_pT = cms.double(500),
+        max_pT_dRcut = cms.double(0.1),
+        max_pT_trackPTcut = cms.double(3),
+        min_pT = cms.double(120),
+        min_pT_dRcut = cms.double(0.5),
+        normChi2Max = cms.double(99999.9),
+        pixelHitsMin = cms.uint32(1),
+        ptMin = cms.double(1.0),
+        qualityClass = cms.string('any'),
+        sip2dSigMax = cms.double(99999.9),
+        sip2dSigMin = cms.double(-99999.9),
+        sip2dValMax = cms.double(99999.9),
+        sip2dValMin = cms.double(-99999.9),
+        sip3dSigMax = cms.double(99999.9),
+        sip3dSigMin = cms.double(-99999.9),
+        sip3dValMax = cms.double(99999.9),
+        sip3dValMin = cms.double(-99999.9),
+        totalHitsMin = cms.uint32(0),
+        useVariableJTA = cms.bool(False)
+    ),
+    trackSort = cms.string('sip3dSig'),
+    useExternalSV = cms.bool(True),
+    usePVError = cms.bool(True),
+    vertexCuts = cms.PSet(
+        distSig2dMax = cms.double(99999.9),
+        distSig2dMin = cms.double(2.0),
+        distSig3dMax = cms.double(99999.9),
+        distSig3dMin = cms.double(-99999.9),
+        distVal2dMax = cms.double(2.5),
+        distVal2dMin = cms.double(0.01),
+        distVal3dMax = cms.double(99999.9),
+        distVal3dMin = cms.double(-99999.9),
+        fracPV = cms.double(0.79),
+        massMax = cms.double(6.5),
+        maxDeltaRToJetAxis = cms.double(0.8),
+        minimumTrackWeight = cms.double(0.5),
+        multiplicityMin = cms.uint32(2),
+        useTrackWeights = cms.bool(True),
+        v0Filter = cms.PSet(
+            k0sMassWindow = cms.double(0.05)
+        )
+    ),
+    vertexReco = cms.PSet(
+        finder = cms.string('avr'),
+        minweight = cms.double(0.5),
+        primcut = cms.double(1.8),
+        seccut = cms.double(6.0),
+        smoothing = cms.bool(False),
+        weightthreshold = cms.double(0.001)
+    ),
+    vertexSelection = cms.PSet(
+        sortCriterium = cms.string('dist3dError')
+    )
+)
+
+
+process.pfInclusiveSecondaryVertexFinderAK8TagInfosHepTopTagCHSSubjets = cms.EDProducer("CandSecondaryVertexProducer",
+    beamSpotTag = cms.InputTag("offlineBeamSpot"),
+    constraint = cms.string('BeamSpot'),
+    extSVCollection = cms.InputTag("slimmedSecondaryVertices"),
+    extSVDeltaRToJet = cms.double(0.8),
+    fatJets = cms.InputTag("ca15CHSJets"),
+    groomedFatJets = cms.InputTag("hepTopTagCHS"),
+    jetAlgorithm = cms.string('CambridgeAachen'),
+    minimumTrackWeight = cms.double(0.5),
+    rParam = cms.double(1.5),
+    trackIPTagInfos = cms.InputTag("pfImpactParameterAK8TagInfosHepTopTagCHSSubjets"),
     trackSelection = cms.PSet(
         a_dR = cms.double(-0.001053),
         a_pT = cms.double(0.005263),
@@ -11934,6 +12669,153 @@ process.pfInclusiveSecondaryVertexFinderCA15TagInfosCa15PuppiJetsSoftDropSubjets
 )
 
 
+process.pfInclusiveSecondaryVertexFinderCA15TagInfosHepTopTagCHS = cms.EDProducer("CandSecondaryVertexProducer",
+    beamSpotTag = cms.InputTag("offlineBeamSpot"),
+    constraint = cms.string('BeamSpot'),
+    extSVCollection = cms.InputTag("slimmedSecondaryVertices"),
+    extSVDeltaRToJet = cms.double(1.5),
+    minimumTrackWeight = cms.double(0.5),
+    trackIPTagInfos = cms.InputTag("pfImpactParameterCA15TagInfosHepTopTagCHS"),
+    trackSelection = cms.PSet(
+        a_dR = cms.double(-0.001053),
+        a_pT = cms.double(0.005263),
+        b_dR = cms.double(0.6263),
+        b_pT = cms.double(0.3684),
+        jetDeltaRMax = cms.double(1.5),
+        maxDecayLen = cms.double(99999.9),
+        maxDistToAxis = cms.double(0.2),
+        max_pT = cms.double(500),
+        max_pT_dRcut = cms.double(0.1),
+        max_pT_trackPTcut = cms.double(3),
+        min_pT = cms.double(120),
+        min_pT_dRcut = cms.double(0.5),
+        normChi2Max = cms.double(99999.9),
+        pixelHitsMin = cms.uint32(1),
+        ptMin = cms.double(1.0),
+        qualityClass = cms.string('any'),
+        sip2dSigMax = cms.double(99999.9),
+        sip2dSigMin = cms.double(-99999.9),
+        sip2dValMax = cms.double(99999.9),
+        sip2dValMin = cms.double(-99999.9),
+        sip3dSigMax = cms.double(99999.9),
+        sip3dSigMin = cms.double(-99999.9),
+        sip3dValMax = cms.double(99999.9),
+        sip3dValMin = cms.double(-99999.9),
+        totalHitsMin = cms.uint32(0),
+        useVariableJTA = cms.bool(False)
+    ),
+    trackSort = cms.string('sip3dSig'),
+    useExternalSV = cms.bool(True),
+    usePVError = cms.bool(True),
+    vertexCuts = cms.PSet(
+        distSig2dMax = cms.double(99999.9),
+        distSig2dMin = cms.double(2.0),
+        distSig3dMax = cms.double(99999.9),
+        distSig3dMin = cms.double(-99999.9),
+        distVal2dMax = cms.double(2.5),
+        distVal2dMin = cms.double(0.01),
+        distVal3dMax = cms.double(99999.9),
+        distVal3dMin = cms.double(-99999.9),
+        fracPV = cms.double(0.79),
+        massMax = cms.double(6.5),
+        maxDeltaRToJetAxis = cms.double(1.5),
+        minimumTrackWeight = cms.double(0.5),
+        multiplicityMin = cms.uint32(2),
+        useTrackWeights = cms.bool(True),
+        v0Filter = cms.PSet(
+            k0sMassWindow = cms.double(0.05)
+        )
+    ),
+    vertexReco = cms.PSet(
+        finder = cms.string('avr'),
+        minweight = cms.double(0.5),
+        primcut = cms.double(1.8),
+        seccut = cms.double(6.0),
+        smoothing = cms.bool(False),
+        weightthreshold = cms.double(0.001)
+    ),
+    vertexSelection = cms.PSet(
+        sortCriterium = cms.string('dist3dError')
+    )
+)
+
+
+process.pfInclusiveSecondaryVertexFinderCA15TagInfosHepTopTagCHSSubjets = cms.EDProducer("CandSecondaryVertexProducer",
+    beamSpotTag = cms.InputTag("offlineBeamSpot"),
+    constraint = cms.string('BeamSpot'),
+    extSVCollection = cms.InputTag("slimmedSecondaryVertices"),
+    extSVDeltaRToJet = cms.double(1.5),
+    fatJets = cms.InputTag("ca15CHSJets"),
+    groomedFatJets = cms.InputTag("hepTopTagCHS"),
+    jetAlgorithm = cms.string('CambridgeAachen'),
+    minimumTrackWeight = cms.double(0.5),
+    rParam = cms.double(1.5),
+    trackIPTagInfos = cms.InputTag("pfImpactParameterCA15TagInfosHepTopTagCHSSubjets"),
+    trackSelection = cms.PSet(
+        a_dR = cms.double(-0.001053),
+        a_pT = cms.double(0.005263),
+        b_dR = cms.double(0.6263),
+        b_pT = cms.double(0.3684),
+        jetDeltaRMax = cms.double(1.5),
+        maxDecayLen = cms.double(99999.9),
+        maxDistToAxis = cms.double(0.2),
+        max_pT = cms.double(500),
+        max_pT_dRcut = cms.double(0.1),
+        max_pT_trackPTcut = cms.double(3),
+        min_pT = cms.double(120),
+        min_pT_dRcut = cms.double(0.5),
+        normChi2Max = cms.double(99999.9),
+        pixelHitsMin = cms.uint32(1),
+        ptMin = cms.double(1.0),
+        qualityClass = cms.string('any'),
+        sip2dSigMax = cms.double(99999.9),
+        sip2dSigMin = cms.double(-99999.9),
+        sip2dValMax = cms.double(99999.9),
+        sip2dValMin = cms.double(-99999.9),
+        sip3dSigMax = cms.double(99999.9),
+        sip3dSigMin = cms.double(-99999.9),
+        sip3dValMax = cms.double(99999.9),
+        sip3dValMin = cms.double(-99999.9),
+        totalHitsMin = cms.uint32(0),
+        useVariableJTA = cms.bool(False)
+    ),
+    trackSort = cms.string('sip3dSig'),
+    useExternalSV = cms.bool(True),
+    usePVError = cms.bool(True),
+    useSVClustering = cms.bool(True),
+    vertexCuts = cms.PSet(
+        distSig2dMax = cms.double(99999.9),
+        distSig2dMin = cms.double(2.0),
+        distSig3dMax = cms.double(99999.9),
+        distSig3dMin = cms.double(-99999.9),
+        distVal2dMax = cms.double(2.5),
+        distVal2dMin = cms.double(0.01),
+        distVal3dMax = cms.double(99999.9),
+        distVal3dMin = cms.double(-99999.9),
+        fracPV = cms.double(0.79),
+        massMax = cms.double(6.5),
+        maxDeltaRToJetAxis = cms.double(1.5),
+        minimumTrackWeight = cms.double(0.5),
+        multiplicityMin = cms.uint32(2),
+        useTrackWeights = cms.bool(True),
+        v0Filter = cms.PSet(
+            k0sMassWindow = cms.double(0.05)
+        )
+    ),
+    vertexReco = cms.PSet(
+        finder = cms.string('avr'),
+        minweight = cms.double(0.5),
+        primcut = cms.double(1.8),
+        seccut = cms.double(6.0),
+        smoothing = cms.bool(False),
+        weightthreshold = cms.double(0.001)
+    ),
+    vertexSelection = cms.PSet(
+        sortCriterium = cms.string('dist3dError')
+    )
+)
+
+
 process.pfInclusiveSecondaryVertexFinderTagInfosAk8CHSJets = cms.EDProducer("CandSecondaryVertexProducer",
     beamSpotTag = cms.InputTag("offlineBeamSpot"),
     constraint = cms.string('BeamSpot'),
@@ -13247,6 +14129,153 @@ process.pfInclusiveSecondaryVertexFinderTagInfosCa15PuppiJetsSoftDropSubjets = c
 )
 
 
+process.pfInclusiveSecondaryVertexFinderTagInfosHepTopTagCHS = cms.EDProducer("CandSecondaryVertexProducer",
+    beamSpotTag = cms.InputTag("offlineBeamSpot"),
+    constraint = cms.string('BeamSpot'),
+    extSVCollection = cms.InputTag("slimmedSecondaryVertices"),
+    extSVDeltaRToJet = cms.double(0.3),
+    minimumTrackWeight = cms.double(0.5),
+    trackIPTagInfos = cms.InputTag("pfImpactParameterTagInfosHepTopTagCHS"),
+    trackSelection = cms.PSet(
+        a_dR = cms.double(-0.001053),
+        a_pT = cms.double(0.005263),
+        b_dR = cms.double(0.6263),
+        b_pT = cms.double(0.3684),
+        jetDeltaRMax = cms.double(0.3),
+        maxDecayLen = cms.double(99999.9),
+        maxDistToAxis = cms.double(0.2),
+        max_pT = cms.double(500),
+        max_pT_dRcut = cms.double(0.1),
+        max_pT_trackPTcut = cms.double(3),
+        min_pT = cms.double(120),
+        min_pT_dRcut = cms.double(0.5),
+        normChi2Max = cms.double(99999.9),
+        pixelHitsMin = cms.uint32(1),
+        ptMin = cms.double(1.0),
+        qualityClass = cms.string('any'),
+        sip2dSigMax = cms.double(99999.9),
+        sip2dSigMin = cms.double(-99999.9),
+        sip2dValMax = cms.double(99999.9),
+        sip2dValMin = cms.double(-99999.9),
+        sip3dSigMax = cms.double(99999.9),
+        sip3dSigMin = cms.double(-99999.9),
+        sip3dValMax = cms.double(99999.9),
+        sip3dValMin = cms.double(-99999.9),
+        totalHitsMin = cms.uint32(0),
+        useVariableJTA = cms.bool(False)
+    ),
+    trackSort = cms.string('sip3dSig'),
+    useExternalSV = cms.bool(True),
+    usePVError = cms.bool(True),
+    vertexCuts = cms.PSet(
+        distSig2dMax = cms.double(99999.9),
+        distSig2dMin = cms.double(2.0),
+        distSig3dMax = cms.double(99999.9),
+        distSig3dMin = cms.double(-99999.9),
+        distVal2dMax = cms.double(2.5),
+        distVal2dMin = cms.double(0.01),
+        distVal3dMax = cms.double(99999.9),
+        distVal3dMin = cms.double(-99999.9),
+        fracPV = cms.double(0.79),
+        massMax = cms.double(6.5),
+        maxDeltaRToJetAxis = cms.double(0.4),
+        minimumTrackWeight = cms.double(0.5),
+        multiplicityMin = cms.uint32(2),
+        useTrackWeights = cms.bool(True),
+        v0Filter = cms.PSet(
+            k0sMassWindow = cms.double(0.05)
+        )
+    ),
+    vertexReco = cms.PSet(
+        finder = cms.string('avr'),
+        minweight = cms.double(0.5),
+        primcut = cms.double(1.8),
+        seccut = cms.double(6.0),
+        smoothing = cms.bool(False),
+        weightthreshold = cms.double(0.001)
+    ),
+    vertexSelection = cms.PSet(
+        sortCriterium = cms.string('dist3dError')
+    )
+)
+
+
+process.pfInclusiveSecondaryVertexFinderTagInfosHepTopTagCHSSubjets = cms.EDProducer("CandSecondaryVertexProducer",
+    beamSpotTag = cms.InputTag("offlineBeamSpot"),
+    constraint = cms.string('BeamSpot'),
+    extSVCollection = cms.InputTag("slimmedSecondaryVertices"),
+    extSVDeltaRToJet = cms.double(0.3),
+    fatJets = cms.InputTag("ca15CHSJets"),
+    groomedFatJets = cms.InputTag("hepTopTagCHS"),
+    jetAlgorithm = cms.string('CambridgeAachen'),
+    minimumTrackWeight = cms.double(0.5),
+    rParam = cms.double(1.5),
+    trackIPTagInfos = cms.InputTag("pfImpactParameterTagInfosHepTopTagCHSSubjets"),
+    trackSelection = cms.PSet(
+        a_dR = cms.double(-0.001053),
+        a_pT = cms.double(0.005263),
+        b_dR = cms.double(0.6263),
+        b_pT = cms.double(0.3684),
+        jetDeltaRMax = cms.double(0.3),
+        maxDecayLen = cms.double(99999.9),
+        maxDistToAxis = cms.double(0.2),
+        max_pT = cms.double(500),
+        max_pT_dRcut = cms.double(0.1),
+        max_pT_trackPTcut = cms.double(3),
+        min_pT = cms.double(120),
+        min_pT_dRcut = cms.double(0.5),
+        normChi2Max = cms.double(99999.9),
+        pixelHitsMin = cms.uint32(1),
+        ptMin = cms.double(1.0),
+        qualityClass = cms.string('any'),
+        sip2dSigMax = cms.double(99999.9),
+        sip2dSigMin = cms.double(-99999.9),
+        sip2dValMax = cms.double(99999.9),
+        sip2dValMin = cms.double(-99999.9),
+        sip3dSigMax = cms.double(99999.9),
+        sip3dSigMin = cms.double(-99999.9),
+        sip3dValMax = cms.double(99999.9),
+        sip3dValMin = cms.double(-99999.9),
+        totalHitsMin = cms.uint32(0),
+        useVariableJTA = cms.bool(False)
+    ),
+    trackSort = cms.string('sip3dSig'),
+    useExternalSV = cms.bool(True),
+    usePVError = cms.bool(True),
+    useSVClustering = cms.bool(True),
+    vertexCuts = cms.PSet(
+        distSig2dMax = cms.double(99999.9),
+        distSig2dMin = cms.double(2.0),
+        distSig3dMax = cms.double(99999.9),
+        distSig3dMin = cms.double(-99999.9),
+        distVal2dMax = cms.double(2.5),
+        distVal2dMin = cms.double(0.01),
+        distVal3dMax = cms.double(99999.9),
+        distVal3dMin = cms.double(-99999.9),
+        fracPV = cms.double(0.79),
+        massMax = cms.double(6.5),
+        maxDeltaRToJetAxis = cms.double(0.4),
+        minimumTrackWeight = cms.double(0.5),
+        multiplicityMin = cms.uint32(2),
+        useTrackWeights = cms.bool(True),
+        v0Filter = cms.PSet(
+            k0sMassWindow = cms.double(0.05)
+        )
+    ),
+    vertexReco = cms.PSet(
+        finder = cms.string('avr'),
+        minweight = cms.double(0.5),
+        primcut = cms.double(1.8),
+        seccut = cms.double(6.0),
+        smoothing = cms.bool(False),
+        weightthreshold = cms.double(0.001)
+    ),
+    vertexSelection = cms.PSet(
+        sortCriterium = cms.string('dist3dError')
+    )
+)
+
+
 process.pfJetBProbabilityBJetTagsAk8CHSJets = cms.EDProducer("JetTagProducer",
     jetTagComputer = cms.string('candidateJetBProbabilityComputer'),
     tagInfos = cms.VInputTag(cms.InputTag("pfImpactParameterTagInfosAk8CHSJets"))
@@ -13355,6 +14384,18 @@ process.pfJetBProbabilityBJetTagsCa15PuppiJetsSoftDropSubjets = cms.EDProducer("
 )
 
 
+process.pfJetBProbabilityBJetTagsHepTopTagCHS = cms.EDProducer("JetTagProducer",
+    jetTagComputer = cms.string('candidateJetBProbabilityComputer'),
+    tagInfos = cms.VInputTag(cms.InputTag("pfImpactParameterTagInfosHepTopTagCHS"))
+)
+
+
+process.pfJetBProbabilityBJetTagsHepTopTagCHSSubjets = cms.EDProducer("JetTagProducer",
+    jetTagComputer = cms.string('candidateJetBProbabilityComputer'),
+    tagInfos = cms.VInputTag(cms.InputTag("pfImpactParameterTagInfosHepTopTagCHSSubjets"))
+)
+
+
 process.pfJetProbabilityBJetTagsAk8CHSJets = cms.EDProducer("JetTagProducer",
     jetTagComputer = cms.string('candidateJetProbabilityComputer'),
     tagInfos = cms.VInputTag(cms.InputTag("pfImpactParameterTagInfosAk8CHSJets"))
@@ -13460,6 +14501,18 @@ process.pfJetProbabilityBJetTagsCa15PuppiJetsSoftDrop = cms.EDProducer("JetTagPr
 process.pfJetProbabilityBJetTagsCa15PuppiJetsSoftDropSubjets = cms.EDProducer("JetTagProducer",
     jetTagComputer = cms.string('candidateJetProbabilityComputer'),
     tagInfos = cms.VInputTag(cms.InputTag("pfImpactParameterTagInfosCa15PuppiJetsSoftDropSubjets"))
+)
+
+
+process.pfJetProbabilityBJetTagsHepTopTagCHS = cms.EDProducer("JetTagProducer",
+    jetTagComputer = cms.string('candidateJetProbabilityComputer'),
+    tagInfos = cms.VInputTag(cms.InputTag("pfImpactParameterTagInfosHepTopTagCHS"))
+)
+
+
+process.pfJetProbabilityBJetTagsHepTopTagCHSSubjets = cms.EDProducer("JetTagProducer",
+    jetTagComputer = cms.string('candidateJetProbabilityComputer'),
+    tagInfos = cms.VInputTag(cms.InputTag("pfImpactParameterTagInfosHepTopTagCHSSubjets"))
 )
 
 
@@ -14775,6 +15828,148 @@ process.pfSecondaryVertexTagInfosCa15PuppiJetsSoftDropSubjets = cms.EDProducer("
 )
 
 
+process.pfSecondaryVertexTagInfosHepTopTagCHS = cms.EDProducer("CandSecondaryVertexProducer",
+    beamSpotTag = cms.InputTag("offlineBeamSpot"),
+    constraint = cms.string('BeamSpot'),
+    extSVCollection = cms.InputTag("secondaryVertices"),
+    extSVDeltaRToJet = cms.double(0.3),
+    minimumTrackWeight = cms.double(0.5),
+    trackIPTagInfos = cms.InputTag("pfImpactParameterTagInfosHepTopTagCHS"),
+    trackSelection = cms.PSet(
+        a_dR = cms.double(-0.001053),
+        a_pT = cms.double(0.005263),
+        b_dR = cms.double(0.6263),
+        b_pT = cms.double(0.3684),
+        jetDeltaRMax = cms.double(0.3),
+        maxDecayLen = cms.double(99999.9),
+        maxDistToAxis = cms.double(0.2),
+        max_pT = cms.double(500),
+        max_pT_dRcut = cms.double(0.1),
+        max_pT_trackPTcut = cms.double(3),
+        min_pT = cms.double(120),
+        min_pT_dRcut = cms.double(0.5),
+        normChi2Max = cms.double(99999.9),
+        pixelHitsMin = cms.uint32(1),
+        ptMin = cms.double(1.0),
+        qualityClass = cms.string('any'),
+        sip2dSigMax = cms.double(99999.9),
+        sip2dSigMin = cms.double(-99999.9),
+        sip2dValMax = cms.double(99999.9),
+        sip2dValMin = cms.double(-99999.9),
+        sip3dSigMax = cms.double(99999.9),
+        sip3dSigMin = cms.double(-99999.9),
+        sip3dValMax = cms.double(99999.9),
+        sip3dValMin = cms.double(-99999.9),
+        totalHitsMin = cms.uint32(0),
+        useVariableJTA = cms.bool(False)
+    ),
+    trackSort = cms.string('sip3dSig'),
+    useExternalSV = cms.bool(False),
+    usePVError = cms.bool(True),
+    vertexCuts = cms.PSet(
+        distSig2dMax = cms.double(99999.9),
+        distSig2dMin = cms.double(3.0),
+        distSig3dMax = cms.double(99999.9),
+        distSig3dMin = cms.double(-99999.9),
+        distVal2dMax = cms.double(2.5),
+        distVal2dMin = cms.double(0.01),
+        distVal3dMax = cms.double(99999.9),
+        distVal3dMin = cms.double(-99999.9),
+        fracPV = cms.double(0.65),
+        massMax = cms.double(6.5),
+        maxDeltaRToJetAxis = cms.double(0.4),
+        minimumTrackWeight = cms.double(0.5),
+        multiplicityMin = cms.uint32(2),
+        useTrackWeights = cms.bool(True),
+        v0Filter = cms.PSet(
+            k0sMassWindow = cms.double(0.05)
+        )
+    ),
+    vertexReco = cms.PSet(
+        finder = cms.string('avr'),
+        minweight = cms.double(0.5),
+        primcut = cms.double(1.8),
+        seccut = cms.double(6.0),
+        smoothing = cms.bool(False),
+        weightthreshold = cms.double(0.001)
+    ),
+    vertexSelection = cms.PSet(
+        sortCriterium = cms.string('dist3dError')
+    )
+)
+
+
+process.pfSecondaryVertexTagInfosHepTopTagCHSSubjets = cms.EDProducer("CandSecondaryVertexProducer",
+    beamSpotTag = cms.InputTag("offlineBeamSpot"),
+    constraint = cms.string('BeamSpot'),
+    extSVCollection = cms.InputTag("secondaryVertices"),
+    extSVDeltaRToJet = cms.double(0.3),
+    minimumTrackWeight = cms.double(0.5),
+    trackIPTagInfos = cms.InputTag("pfImpactParameterTagInfosHepTopTagCHSSubjets"),
+    trackSelection = cms.PSet(
+        a_dR = cms.double(-0.001053),
+        a_pT = cms.double(0.005263),
+        b_dR = cms.double(0.6263),
+        b_pT = cms.double(0.3684),
+        jetDeltaRMax = cms.double(0.3),
+        maxDecayLen = cms.double(99999.9),
+        maxDistToAxis = cms.double(0.2),
+        max_pT = cms.double(500),
+        max_pT_dRcut = cms.double(0.1),
+        max_pT_trackPTcut = cms.double(3),
+        min_pT = cms.double(120),
+        min_pT_dRcut = cms.double(0.5),
+        normChi2Max = cms.double(99999.9),
+        pixelHitsMin = cms.uint32(1),
+        ptMin = cms.double(1.0),
+        qualityClass = cms.string('any'),
+        sip2dSigMax = cms.double(99999.9),
+        sip2dSigMin = cms.double(-99999.9),
+        sip2dValMax = cms.double(99999.9),
+        sip2dValMin = cms.double(-99999.9),
+        sip3dSigMax = cms.double(99999.9),
+        sip3dSigMin = cms.double(-99999.9),
+        sip3dValMax = cms.double(99999.9),
+        sip3dValMin = cms.double(-99999.9),
+        totalHitsMin = cms.uint32(0),
+        useVariableJTA = cms.bool(False)
+    ),
+    trackSort = cms.string('sip3dSig'),
+    useExternalSV = cms.bool(False),
+    usePVError = cms.bool(True),
+    vertexCuts = cms.PSet(
+        distSig2dMax = cms.double(99999.9),
+        distSig2dMin = cms.double(3.0),
+        distSig3dMax = cms.double(99999.9),
+        distSig3dMin = cms.double(-99999.9),
+        distVal2dMax = cms.double(2.5),
+        distVal2dMin = cms.double(0.01),
+        distVal3dMax = cms.double(99999.9),
+        distVal3dMin = cms.double(-99999.9),
+        fracPV = cms.double(0.65),
+        massMax = cms.double(6.5),
+        maxDeltaRToJetAxis = cms.double(0.4),
+        minimumTrackWeight = cms.double(0.5),
+        multiplicityMin = cms.uint32(2),
+        useTrackWeights = cms.bool(True),
+        v0Filter = cms.PSet(
+            k0sMassWindow = cms.double(0.05)
+        )
+    ),
+    vertexReco = cms.PSet(
+        finder = cms.string('avr'),
+        minweight = cms.double(0.5),
+        primcut = cms.double(1.8),
+        seccut = cms.double(6.0),
+        smoothing = cms.bool(False),
+        weightthreshold = cms.double(0.001)
+    ),
+    vertexSelection = cms.PSet(
+        sortCriterium = cms.string('dist3dError')
+    )
+)
+
+
 process.pfSimpleSecondaryVertexHighEffBJetTagsAk8CHSJets = cms.EDProducer("JetTagProducer",
     jetTagComputer = cms.string('candidateSimpleSecondaryVertex2TrkComputer'),
     tagInfos = cms.VInputTag(cms.InputTag("pfSecondaryVertexTagInfosAk8CHSJets"))
@@ -14883,6 +16078,18 @@ process.pfSimpleSecondaryVertexHighEffBJetTagsCa15PuppiJetsSoftDropSubjets = cms
 )
 
 
+process.pfSimpleSecondaryVertexHighEffBJetTagsHepTopTagCHS = cms.EDProducer("JetTagProducer",
+    jetTagComputer = cms.string('candidateSimpleSecondaryVertex2TrkComputer'),
+    tagInfos = cms.VInputTag(cms.InputTag("pfSecondaryVertexTagInfosHepTopTagCHS"))
+)
+
+
+process.pfSimpleSecondaryVertexHighEffBJetTagsHepTopTagCHSSubjets = cms.EDProducer("JetTagProducer",
+    jetTagComputer = cms.string('candidateSimpleSecondaryVertex2TrkComputer'),
+    tagInfos = cms.VInputTag(cms.InputTag("pfSecondaryVertexTagInfosHepTopTagCHSSubjets"))
+)
+
+
 process.pfSimpleSecondaryVertexHighPurBJetTagsAk8CHSJets = cms.EDProducer("JetTagProducer",
     jetTagComputer = cms.string('candidateSimpleSecondaryVertex3TrkComputer'),
     tagInfos = cms.VInputTag(cms.InputTag("pfSecondaryVertexTagInfosAk8CHSJets"))
@@ -14988,6 +16195,18 @@ process.pfSimpleSecondaryVertexHighPurBJetTagsCa15PuppiJetsSoftDrop = cms.EDProd
 process.pfSimpleSecondaryVertexHighPurBJetTagsCa15PuppiJetsSoftDropSubjets = cms.EDProducer("JetTagProducer",
     jetTagComputer = cms.string('candidateSimpleSecondaryVertex3TrkComputer'),
     tagInfos = cms.VInputTag(cms.InputTag("pfSecondaryVertexTagInfosCa15PuppiJetsSoftDropSubjets"))
+)
+
+
+process.pfSimpleSecondaryVertexHighPurBJetTagsHepTopTagCHS = cms.EDProducer("JetTagProducer",
+    jetTagComputer = cms.string('candidateSimpleSecondaryVertex3TrkComputer'),
+    tagInfos = cms.VInputTag(cms.InputTag("pfSecondaryVertexTagInfosHepTopTagCHS"))
+)
+
+
+process.pfSimpleSecondaryVertexHighPurBJetTagsHepTopTagCHSSubjets = cms.EDProducer("JetTagProducer",
+    jetTagComputer = cms.string('candidateSimpleSecondaryVertex3TrkComputer'),
+    tagInfos = cms.VInputTag(cms.InputTag("pfSecondaryVertexTagInfosHepTopTagCHSSubjets"))
 )
 
 
@@ -15336,6 +16555,24 @@ process.softPFElectronsTagInfosCa15PuppiJetsSoftDropSubjets = cms.EDProducer("So
 )
 
 
+process.softPFElectronsTagInfosHepTopTagCHS = cms.EDProducer("SoftPFElectronTagInfoProducer",
+    DeltaRElectronJet = cms.double(0.4),
+    MaxSip3Dsig = cms.double(200),
+    electrons = cms.InputTag("slimmedElectrons"),
+    jets = cms.InputTag("hepTopTagCHS"),
+    primaryVertex = cms.InputTag("offlineSlimmedPrimaryVertices")
+)
+
+
+process.softPFElectronsTagInfosHepTopTagCHSSubjets = cms.EDProducer("SoftPFElectronTagInfoProducer",
+    DeltaRElectronJet = cms.double(0.4),
+    MaxSip3Dsig = cms.double(200),
+    electrons = cms.InputTag("slimmedElectrons"),
+    jets = cms.InputTag("hepTopTagCHS","SubJets"),
+    primaryVertex = cms.InputTag("offlineSlimmedPrimaryVertices")
+)
+
+
 process.softPFMuonsTagInfosAk8CHSJets = cms.EDProducer("SoftPFMuonTagInfoProducer",
     filterIpsig = cms.double(4.0),
     filterPromptMuons = cms.bool(False),
@@ -15570,6 +16807,32 @@ process.softPFMuonsTagInfosCa15PuppiJetsSoftDropSubjets = cms.EDProducer("SoftPF
 )
 
 
+process.softPFMuonsTagInfosHepTopTagCHS = cms.EDProducer("SoftPFMuonTagInfoProducer",
+    filterIpsig = cms.double(4.0),
+    filterPromptMuons = cms.bool(False),
+    filterRatio1 = cms.double(0.4),
+    filterRatio2 = cms.double(0.7),
+    jets = cms.InputTag("hepTopTagCHS"),
+    muonPt = cms.double(2.0),
+    muonSIPsig = cms.double(200.0),
+    muons = cms.InputTag("slimmedMuons"),
+    primaryVertex = cms.InputTag("offlineSlimmedPrimaryVertices")
+)
+
+
+process.softPFMuonsTagInfosHepTopTagCHSSubjets = cms.EDProducer("SoftPFMuonTagInfoProducer",
+    filterIpsig = cms.double(4.0),
+    filterPromptMuons = cms.bool(False),
+    filterRatio1 = cms.double(0.4),
+    filterRatio2 = cms.double(0.7),
+    jets = cms.InputTag("hepTopTagCHS","SubJets"),
+    muonPt = cms.double(2.0),
+    muonSIPsig = cms.double(200.0),
+    muons = cms.InputTag("slimmedMuons"),
+    primaryVertex = cms.InputTag("offlineSlimmedPrimaryVertices")
+)
+
+
 process.MyNtuple = cms.EDFilter("NtupleWriter",
     doAllGenParticles = cms.bool(False),
     doAllPFParticles = cms.bool(False),
@@ -15609,15 +16872,24 @@ process.MyNtuple = cms.EDFilter("NtupleWriter",
     genparticle_source = cms.InputTag("prunedPrunedGenParticles"),
     gentopjet_etamax = cms.double(5.0),
     gentopjet_ptmin = cms.double(150.0),
-    gentopjet_sources = cms.VInputTag(cms.InputTag("ak8GenJets"), cms.InputTag("ak8GenJetsSoftDrop")),
-    gentopjet_tau1 = cms.VInputTag(cms.InputTag("NjettinessAk8Gen","tau1"), cms.InputTag("NjettinessAk8SoftDropGen","tau1")),
-    gentopjet_tau2 = cms.VInputTag(cms.InputTag("NjettinessAk8Gen","tau2"), cms.InputTag("NjettinessAk8SoftDropGen","tau2")),
-    gentopjet_tau3 = cms.VInputTag(cms.InputTag("NjettinessAk8Gen","tau3"), cms.InputTag("NjettinessAk8SoftDropGen","tau3")),
-    higgstag_names = cms.vstring(' ', 
-        ' ', 
+#    gentopjet_sources = cms.VInputTag(cms.InputTag("ak8GenJetsSoftDrop")),
+    gentopjet_sources = cms.VInputTag(cms.InputTag("ak8GenJets"),cms.InputTag("ak8GenJetsSoftDrop")), #this can be used to save N-subjettiness for ungroomed GenJets
+#    gentopjet_tau1 = cms.VInputTag(),
+#    gentopjet_tau2 = cms.VInputTag(),
+#    gentopjet_tau3 = cms.VInputTag(),
+        gentopjet_tau1 = cms.VInputTag(cms.InputTag("NjettinessAk8Gen","tau1"),cms.InputTag("NjettinessAk8SoftDropGen","tau1")), #this can be used to save N-subjettiness for GenJets
+        gentopjet_tau2 = cms.VInputTag(cms.InputTag("NjettinessAk8Gen","tau2"),cms.InputTag("NjettinessAk8SoftDropGen","tau2")), #this can be used to save N-subjettiness for GenJets
+        gentopjet_tau3 = cms.VInputTag(cms.InputTag("NjettinessAk8Gen","tau3"),cms.InputTag("NjettinessAk8SoftDropGen","tau3")), #this can be used to save N-subjettiness for GenJets
+        
+    higgstag_names = cms.vstring('pfBoostedDoubleSecondaryVertexAK8BJetTags', 
+        'pfBoostedDoubleSecondaryVertexAK8BJetTags', 
+        'pfBoostedDoubleSecondaryVertexCA15BJetTags', 
+#        'pfBoostedDoubleSecondaryVertexCA15BJetTags', 
         'pfBoostedDoubleSecondaryVertexAK8BJetTags'),
-    higgstag_sources = cms.vstring(' ', 
-        ' ', 
+    higgstag_sources = cms.vstring('patJetsAk8CHSJets', 
+        'patJetsAk8CHSJets', 
+        'patJetsCa15CHSJets', 
+#        'patJetsCa15PuppiJets', 
         'patJetsAk8PuppiJetsFat'),
     hitsNotReplaced_source = cms.InputTag("ecalMultiAndGSGlobalRecHitEB","hitsNotReplaced"),
     jet_etamax = cms.double(999.0),
@@ -15628,7 +16900,9 @@ process.MyNtuple = cms.EDFilter("NtupleWriter",
         'patJetsAK8PFCHS'),
     met_sources = cms.vstring('slimmedMETs', 
         'slimmedMETsPuppi', 
-        'slMETsCHS'),
+        'slMETsCHS', 
+        #'slimmedMETsMuEGClean'
+	),
     metfilter_bits = cms.InputTag("TriggerResults","","HLT"),
     muon_sources = cms.vstring('slimmedMuonsUSER'),
     pf_collection_source = cms.InputTag("packedPFCandidates"),
@@ -15638,9 +16912,13 @@ process.MyNtuple = cms.EDFilter("NtupleWriter",
     stablegenparticle_source = cms.InputTag("packedGenParticles"),
     subjet_sources = cms.vstring('SoftDrop', 
         'daughters', 
+        'daughters', 
+#        'daughters', 
         'daughters'),
     subjet_taginfos = cms.vstring('', 
         'store', 
+        'store', 
+#        'store', 
         'store'),
     tau_etamax = cms.double(999.0),
     tau_ptmin = cms.double(0.0),
@@ -15648,27 +16926,39 @@ process.MyNtuple = cms.EDFilter("NtupleWriter",
     topjet_etamax = cms.double(5.0),
     topjet_njettiness_groomed_sources = cms.vstring('', 
         'NjettinessAk8SoftDropCHS', 
+        'NjettinessCa15SoftDropCHS', 
+#        'NjettinessCa15SoftDropPuppi', 
         'NjettinessAk8SoftDropPuppi'),
     topjet_njettiness_sources = cms.vstring('', 
         'NjettinessAk8CHS', 
+        'NjettinessCa15CHS', 
+#        'NjettinessCa15Puppi', 
         'NjettinessAk8Puppi'),
-    topjet_prunedmass_sources = cms.vstring('ak8PFJetsCHSValueMap:ak8PFJetsCHSPrunedMass', 
+    topjet_prunedmass_sources = cms.vstring('ak8PFJetsCHSPrunedMass', 
         'patJetsAk8CHSJetsPrunedPacked', 
+        'patJetsCa15CHSJetsPrunedPacked', 
+#        'patJetsCa15CHSJetsPrunedPacked', 
         'patJetsAk8CHSJetsPrunedPacked'),
     topjet_ptmin = cms.double(150.0),
-    topjet_softdropmass_sources = cms.vstring('ak8PFJetsCHSValueMap:ak8PFJetsCHSSoftDropMass', 
+    topjet_softdropmass_sources = cms.vstring('ak8PFJetsCHSSoftDropMass', 
         '', 
+        '', 
+#        '', 
         ''),
     topjet_sources = cms.vstring('slimmedJetsAK8', 
         'patJetsAk8CHSJetsSoftDropPacked', 
+        'patJetsHepTopTagCHSPacked', 
+#        'patJetsHepTopTagPuppiPacked', 
         'patJetsAk8PuppiJetsSoftDropPacked'),
     topjet_substructure_groomed_variables_sources = cms.vstring('', 
         'ak8CHSJetsSoftDropforsub', 
         'ca15CHSJetsSoftDropforsub', 
-        'ca15PuppiJetsSoftDropforsub', 
+#        'ca15PuppiJetsSoftDropforsub', 
         'ak8PuppiJetsSoftDropforsub'),
     topjet_substructure_variables_sources = cms.vstring('', 
         'ak8CHSJets', 
+        'ca15CHSJets', 
+#        'ca15PuppiJets', 
         'ak8PuppiJetsFat'),
     triggerObjects_sources = cms.vstring(''),
     trigger_bits = cms.InputTag("TriggerResults","","HLT"),
@@ -15850,6 +17140,18 @@ process.selectedPatJetsCa15PuppiJetsSoftDropSubjets = cms.EDFilter("PATJetSelect
 )
 
 
+process.selectedPatJetsHepTopTagCHS = cms.EDFilter("PATJetSelector",
+    cut = cms.string(''),
+    src = cms.InputTag("patJetsHepTopTagCHS")
+)
+
+
+process.selectedPatJetsHepTopTagCHSSubjets = cms.EDFilter("PATJetSelector",
+    cut = cms.string(''),
+    src = cms.InputTag("patJetsHepTopTagCHSSubjets")
+)
+
+
 process.out = cms.OutputModule("PoolOutputModule",
     fileName = cms.untracked.string('miniaod.root'),
     outputCommands = cms.untracked.vstring('drop *', 
@@ -15928,6 +17230,8 @@ process.out = cms.OutputModule("PoolOutputModule",
         'keep *_NjettinessCa15SoftDropCHS_*_*', 
         'keep *_patJetsCmsTopTagCHSPacked_*_*', 
         'keep *_patJetsCmsTopTagCHSSubjets_*_*', 
+        'keep *_patJetsHepTopTagCHSPacked_*_*', 
+        'keep *_patJetsHepTopTagCHSSubjets_*_*', 
         'keep *_patJetsAk8CHSJetsSoftDropPacked_*_*', 
         'keep *_patJetsAk8CHSJetsSoftDropSubjets_*_*', 
         'keep *_patJetsAk8PuppiJetsSoftDropPacked_*_*', 
@@ -20416,4 +21720,5 @@ process.es_hardcode = cms.ESSource("HcalHardcodeCalibrations",
 
 
 process.prefer("es_hardcode")
+
 
